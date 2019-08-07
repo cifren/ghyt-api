@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  go:
+    image: golang:latest
+    volumes:
+      - ./:/go
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    entrypoint:
+      - go
+      - run
+      - main
