@@ -4,6 +4,6 @@ WORKDIR /go
 COPY . .
 
 RUN go get -d -v ./...
-RUN go build main.go
+RUN go install main
 
-CMD ["./main"]
+CMD ["main"]
