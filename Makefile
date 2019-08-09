@@ -13,7 +13,7 @@ install:
 	echo "intall"
 
 build:
-	$(go) build src/main/main.go
+	$(dk) build go
 
 up: build
 	$(dk) up go

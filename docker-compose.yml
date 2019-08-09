@@ -2,14 +2,9 @@ version: "3"
 
 services:
   go:
-    image: golang:latest
-    volumes:
-      - ./:/go
+    image: ghyt
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    expose:
-      - "8080"
-    entrypoint:
-      - go
-      - run
-      - main
