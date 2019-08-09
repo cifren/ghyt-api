@@ -6,6 +6,11 @@
 *.so
 *.dylib
 
+bin/
+pkg/
+src/*
+!src/main
+
 # Test binary, build with `go test -c`
 *.test
 

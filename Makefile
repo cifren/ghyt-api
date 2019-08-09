@@ -15,5 +15,14 @@ install:
 build:
 	$(dk) build go
 
-up:
+up: go.install
 	$(dk) up go
+
+go.get:
+	$(go) get -d -v main
+
+go.install: go.get
+	$(go) install -v main
+
+go.build: go.get
+	$(go) build -v main
