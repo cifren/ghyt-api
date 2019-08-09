@@ -15,5 +15,5 @@ install:
 build:
 	$(dk) build go
 
-up: build
+up:
 	$(dk) up go

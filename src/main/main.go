@@ -1,17 +1,21 @@
 package main
 
 import (
-    "fmt"
-    "log"
-    "net/http"
+    "github.com/kataras/iris"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
-}
-
 func main() {
-    http.HandleFunc("/", handler)
-    fmt.Println("Run server on 8080 port")
-    log.Fatal(http.ListenAndServe(":8080", nil))
+
+    app := iris.New()
+
+    // Method:   GET
+    // Resource: http://localhost:8080
+    app.Handle("GET", "/", func(ctx iris.Context) {
+        ctx.HTML("<h1>Welcome</h1>")
+    })
+
+    // http://localhost:8080
+    // http://localhost:8080/ping
+    // http://localhost:8080/hello
+    app.Run(iris.Addr(":8080"), iris.WithoutServerError(iris.ErrServerClosed))
 }
