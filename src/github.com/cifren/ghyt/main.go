@@ -4,7 +4,7 @@ import (
 	"github.com/kataras/iris"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/cifren/ghyt/model"
+	"github.com/cifren/ghyt/internal/model"
 )
 
 func main() {
@@ -14,9 +14,6 @@ func main() {
 		panic("failed to connect database")
 	}
 	defer db.Close()
-
-	// Migrate the schema
-	//db.AutoMigrate(&Product{})
 
 	// Create
 	//db.Create(&Product{Code: "L1212", Price: 1000})
@@ -30,7 +27,7 @@ func main() {
 		ctx.HTML("<h1>Welcome on Ghyt API</h1>")
 	})
 
-	app.Post("/webhook", func(ctx iris.Context) {
+	app.Get("/webhook", func(ctx iris.Context) {
 		// Read
 		var product model.Product
 		db.First(&product, 1) // find product with id 1
