@@ -2,8 +2,7 @@ dk=docker-compose
 dk_run=$(dk) run --rm
 go_dk=$(dk_run) go
 go=$(go_dk) go
-#project_path=github.com/cifren/ghyt
-project_path=ghyt
+project_path=github.com/cifren/ghyt
 
 go.gopath:
 	$(go_dk) env | grep GOPATH
@@ -31,3 +30,7 @@ go.install: go.get
 
 go.build: go.get
 	$(go) build -v $(project_path)
+
+go.database-create: go.get
+	$(go) install -v github.com/cifren/ghyt/internal/scripts
+	$(go_dk) ./bin/scripts
