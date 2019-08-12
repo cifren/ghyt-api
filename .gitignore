@@ -5,11 +5,19 @@
 *.dll
 *.so
 *.dylib
+*.db
 
-bin/
+bin/*
 pkg/
 src/*
-!src/github.com/cifren/ghyt
+
+!src/github.com/
+src/github.com/*
+
+!src/github.com/cifren/
+src/github.com/cifren/*
+
+!src/github.com/cifren/ghyt/
 
 # Test binary, build with `go test -c`
 *.test
