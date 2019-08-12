@@ -9,7 +9,7 @@
 bin/
 pkg/
 src/*
-!src/main
+!src/github.com/cifren/ghyt
 
 # Test binary, build with `go test -c`
 *.test
