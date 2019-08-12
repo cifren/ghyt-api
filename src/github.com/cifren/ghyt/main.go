@@ -4,7 +4,10 @@ import (
 	"github.com/kataras/iris"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/cifren/ghyt/internal/model"
+	//"github.com/cifren/ghyt/internal/model"
+
+    "fmt"
+	"gopkg.in/go-playground/webhooks.v5/github"
 )
 
 func main() {
@@ -15,6 +18,7 @@ func main() {
 	}
 	defer db.Close()
 
+    fmt.Println("Touch my tralala main")
 	// Create
 	//db.Create(&Product{Code: "L1212", Price: 1000})
 
@@ -24,15 +28,35 @@ func main() {
 	// Method:   GET
 	// Resource: http://localhost:8080
 	app.Get("/", func(ctx iris.Context) {
+	    fmt.Println("Touch my tralala index")
 		ctx.HTML("<h1>Welcome on Ghyt API</h1>")
 	})
 
-	app.Get("/webhook", func(ctx iris.Context) {
-		// Read
-		var product model.Product
-		db.First(&product, 1) // find product with id 1
+    hook, _ := github.New(github.Options.Secret("plapodwoainjagbwnaodiopONUnad"))
+	app.Post("/webhook", func(ctx iris.Context) {
+	    fmt.Println("Touch my tralala webhook")
+	    fmt.Println(ctx.Request())
+		payload, err := hook.Parse(ctx.Request(), github.PingEvent, github.PullRequestEvent)
+        if err != nil {
+            if err == github.ErrEventNotFound {
+                // ok event wasn't one of the ones asked to be parsed
+                fmt.Println(github.ErrEventNotFound)
+            }
+        }
+        switch payload.(type) {
 
-		ctx.HTML("<h1>Webhook ok, code product " + product.Code + "</h1>" )
+            case github.PingPayload:
+                release := payload.(github.PingPayload)
+                // Do whatever you want from here...
+                fmt.Printf("%+v", release)
+
+            case github.PullRequestPayload:
+                pullRequest := payload.(github.PullRequestPayload)
+                // Do whatever you want from here...
+                fmt.Printf("%+v", pullRequest)
+            default:
+                fmt.Println(payload)
+        }
 	})
 
 	// http://localhost:8080
