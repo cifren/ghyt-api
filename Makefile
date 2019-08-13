@@ -9,9 +9,7 @@ ngrok=$(dk_run) ngrok ngrok
 ## PROJECT
 project_path=github.com/cifren/ghyt
 
-go.gopath:
-	$(go_dk) env | grep GOPATH
-
+## DOCKER
 console:
 	docker-compose run --rm go bash
 
@@ -27,6 +25,7 @@ down:
 up: go.install
 	$(dk) up go
 
+## GO
 go.get:
 	$(go) get -d -v $(project_path)
 
@@ -36,10 +35,14 @@ go.install: go.get
 go.build: go.get
 	$(go) build -v $(project_path)
 
-go.database-create: go.get
-	$(go) install -v github.com/cifren/ghyt/internal/scripts
-	$(go_dk) ./bin/scripts
+## SCRIPTS
+database-create: go.get
+	$(go) run -v src/github.com/cifren/ghyt/internal/scripts/create_database.go
 
+fixture: go.get
+	$(go) run -v src/github.com/cifren/ghyt/internal/scripts/fixture.go
+
+## SERVICES
 ngrok.up:
 	$(ngrok) http go:8080
 
