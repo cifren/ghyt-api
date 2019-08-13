@@ -7,6 +7,7 @@ import (
 	//"github.com/cifren/ghyt/internal/model"
 
     "fmt"
+    "reflect"
 	"gopkg.in/go-playground/webhooks.v5/github"
 )
 
@@ -18,17 +19,12 @@ func main() {
 	}
 	defer db.Close()
 
-    fmt.Println("Touch my tralala main")
-	// Create
-	//db.Create(&Product{Code: "L1212", Price: 1000})
-
 	// Web Server
 	app := iris.New()
 
 	// Method:   GET
 	// Resource: http://localhost:8080
 	app.Get("/", func(ctx iris.Context) {
-	    fmt.Println("Touch my tralala index")
 		ctx.HTML("<h1>Welcome on Ghyt API</h1>")
 	})
 
@@ -36,15 +32,19 @@ func main() {
 	app.Post("/webhook", func(ctx iris.Context) {
 	    fmt.Println("Touch my tralala webhook")
 	    fmt.Println(ctx.Request())
-		payload, err := hook.Parse(ctx.Request(), github.PingEvent, github.PullRequestEvent)
+		payload, err := hook.Parse(ctx.Request(), github.PingEvent, github.PushEvent)
         if err != nil {
             if err == github.ErrEventNotFound {
                 // ok event wasn't one of the ones asked to be parsed
                 fmt.Println(github.ErrEventNotFound)
             }
         }
+        fmt.Println(reflect.TypeOf(payload))
         switch payload.(type) {
-
+            case github.PushPayload:
+                release := payload.(github.PushPayload)
+                // Do whatever you want from here...
+                fmt.Printf("%+v", release)
             case github.PingPayload:
                 release := payload.(github.PingPayload)
                 // Do whatever you want from here...
@@ -55,7 +55,7 @@ func main() {
                 // Do whatever you want from here...
                 fmt.Printf("%+v", pullRequest)
             default:
-                fmt.Println(payload)
+                fmt.Println("no type")
         }
 	})
 
