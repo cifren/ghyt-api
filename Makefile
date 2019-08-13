@@ -7,7 +7,8 @@ go=$(go_dk) go
 ngrok=$(dk_run) ngrok ngrok
 
 ## PROJECT
-project_path=github.com/cifren/ghyt
+project_name=github.com/cifren/ghyt
+project_path=/go/src/github.com/cifren/ghyt
 
 ## DOCKER
 console:
@@ -27,20 +28,20 @@ up: go.install
 
 ## GO
 go.get:
-	$(go) get -d -v $(project_path)
+	$(go) get -d -v $(project_name)
 
 go.install: go.get
-	$(go) install -v $(project_path)
+	$(go) install -v $(project_name)
 
 go.build: go.get
-	$(go) build -v $(project_path)
+	$(go) build -v $(project_name)
 
 ## SCRIPTS
 database-create: go.get
-	$(go) run -v src/github.com/cifren/ghyt/internal/scripts/create_database.go
+	$(go) run -v $(project_path)/internal/scripts/create_database.go
 
 fixture: go.get
-	$(go) run -v src/github.com/cifren/ghyt/internal/scripts/fixture.go
+	$(go) run -v $(project_path)/internal/scripts/fixture.go
 
 ## SERVICES
 ngrok.up:
