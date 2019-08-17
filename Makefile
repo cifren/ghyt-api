@@ -38,10 +38,10 @@ go.build: go.get
 
 ## SCRIPTS
 database-create: go.get
-	$(go) run -v $(project_path)/internal/scripts/create_database.go
+	$(go) run -v $(project_path)/internal/script/create_database.go
 
 fixture: go.get
-	$(go) run -v $(project_path)/internal/scripts/fixture.go
+	$(go) run -v $(project_path)/internal/script/fixture.go
 
 ## SERVICES
 ngrok.up:
