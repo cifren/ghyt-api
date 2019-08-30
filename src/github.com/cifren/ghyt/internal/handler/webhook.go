@@ -35,7 +35,8 @@ func WebhookHandler(ctx iris.Context)  {
 
 			myAction := action.AddTag{Name: event.GetVariables()["id"]}
 
-			action.ActionRunner.Run(myAction)
+			runner := action.ActionRunner{}
+			runner.RunIt(myAction)
 			
 		case github.PingPayload:
 			release := payload.(github.PingPayload)

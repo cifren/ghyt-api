@@ -12,10 +12,10 @@ type ActionInterface interface {
 type AddTag struct {
 	Name string
 }
-func (this *AddTag) GetName() string {
+func (this AddTag) GetName() string {
 	return this.Name
 }
-func (this *AddTag) Run(client youtrack.Client) {
+func (this AddTag) Run(client youtrack.Client) {
 	manager := youtrack.Manager{Client: client}
 	
 	// get issue tags
@@ -51,7 +51,7 @@ func (this *AddTag) getTag(tags []youtrack.Tag, name string) (youtrack.Tag, bool
 type ActionRunner struct {
 
 }
-func (this *ActionRunner) Run (action ActionInterface) {
+func (this *ActionRunner) RunIt(action ActionInterface) {
 	youtrackUrl := "https://cospirit.myjetbrains.com/youtrack/api"
 	token := "Bearer perm:RnJhbmNpc19MZWNvcQ==.R2h5dA==.d9qeAMnrZ2V8JGs7DGICy6aijn3wWg"
 	client := youtrack.Client{Url: youtrackUrl, Token: token}
