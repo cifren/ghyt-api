@@ -14,26 +14,28 @@ project_path=/go/src/github.com/cifren/ghyt
 console:
 	docker-compose run --rm go bash
 
-install:
-	echo "intall"
-
 build:
 	$(dk) build go
 
 down:
 	$(dk) down --remove-orphan
 
-up: go.install
-	$(dk) up go
+up:
+	$(dk) up -d go
+
+logs:
+	$(dk) logs -f
 
 ## GO
 go.get:
 	$(go) get -d -v $(project_name)
 
-go.install: go.get
+go.install: 
 	$(go) install -v $(project_name)
 
-go.build: go.get
+go.install-start: down go.install up logs
+
+go.build:
 	$(go) build -v $(project_name)
 
 ## SCRIPTS

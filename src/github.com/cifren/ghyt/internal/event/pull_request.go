@@ -17,6 +17,9 @@ type VariableInterface interface {
 type PullRequestEvent struct {
 	Variables map[string]string
 }
+func NewPullRequestEvent() *PullRequestEvent {
+	return &PullRequestEvent{Variables: make(map[string]string)}
+}
 func (this *PullRequestEvent) SetVariables(variables map[string]string) {
 	this.Variables = variables
 }

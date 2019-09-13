@@ -23,7 +23,7 @@ func main() {
 	// Method:   GET
 	// Resource: http://localhost:8080
 	app.Get("/", func(ctx iris.Context) {
-		ctx.HTML("<h1>Welcome on Ghyt API</h1>")
+		ctx.HTML("<h1>Welcome on Ghyt API l</h1>")
 	})
 
 	webhookHandler := hero.Handler(handler.WebhookHandler)

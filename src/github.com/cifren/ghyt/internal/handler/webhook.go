@@ -20,7 +20,7 @@ func WebhookHandler(ctx iris.Context)  {
 			fmt.Println(github.ErrEventNotFound)
 		}
 	}
-	
+	fmt.Println(reflect.TypeOf(payload))
 	switch payload.(type) {
 		case github.PushPayload:
 			release := payload.(github.PushPayload)
@@ -29,7 +29,7 @@ func WebhookHandler(ctx iris.Context)  {
 		case github.PullRequestPayload:
 			release := payload.(github.PullRequestPayload)
 			
-			event := event.PullRequestEvent{}
+			event := event.NewPullRequestEvent()
 			event.Variables["id"] = strconv.FormatInt(release.PullRequest.Number, 10)
 			event.Variables["description"] = string(release.PullRequest.Title)
 
