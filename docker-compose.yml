@@ -1,15 +1,14 @@
-version: "3"
+version: "3.6"
 
 services:
   go:
     image: ghyt
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: ./
     ports:
-      - "8080:8080"
+      - "5000:9000"
     volumes:
       - ./:/go
+    command: ["gin", "--port", "9000", "--appPort", "9001", "run", "main.go"]
 
   ngrok:
     image: wernight/ngrok

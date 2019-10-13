@@ -1,8 +1,8 @@
 dk=docker-compose
 dk_run=$(dk) run --rm
 ## GOLANG
-go_dk=$(dk_run) go
-go=$(go_dk) go
+dkr_go=$(dk_run) go
+r_go=$(dkr_go) go
 ## NGROK
 ngrok=$(dk_run) ngrok ngrok
 
@@ -17,33 +17,31 @@ console:
 build:
 	$(dk) build go
 
-down:
+stop:
 	$(dk) down --remove-orphan
 
-up:
+start:
 	$(dk) up -d go
+	
+restart: stop start
 
 logs:
 	$(dk) logs -f
 
+install: stop go.deps-get go.get go.install start
+
 ## GO
+go.deps-get: 
+	$(r_go) get -v github.com/codegangsta/gin
+	
 go.get:
-	$(go) get -d -v $(project_name)
+	$(r_go) get -d -v $(project_name)
 
 go.install: 
-	$(go) install -v $(project_name)
-
-go.install-start: down go.install up logs
+	$(r_go) install -v $(project_name)
 
 go.build:
-	$(go) build -v $(project_name)
-
-## SCRIPTS
-database-create: go.get
-	$(go) run -v $(project_path)/internal/script/create_database.go
-
-fixture: go.get
-	$(go) run -v $(project_path)/internal/script/fixture.go
+	$(r_go) build -v $(project_name)
 
 ## SERVICES
 ngrok.up:
