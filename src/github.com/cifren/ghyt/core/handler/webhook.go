@@ -4,10 +4,15 @@ import (
 	"fmt"
 	// "gopkg.in/go-playground/webhooks.v5/github"
 	"github.com/kataras/iris"
-	"regexp"
+	. "github.com/cifren/ghyt/core"
+	. "github.com/cifren/ghyt/core/logger"
+	. "github.com/cifren/ghyt/core/job"
+	. "github.com/cifren/ghyt/core/config"
+	"github.com/cifren/ghyt/config"
 	// "reflect"
 	// "github.com/cifren/ghyt/core/event"
 	// "github.com/cifren/ghyt/core/action"
+
 )
 
 func GhWebhookHandler(ctx iris.Context)  {
@@ -53,27 +58,27 @@ func GhWebhookHandler(ctx iris.Context)  {
 	container.InitContainer()
 	logger := container.Get("logger").(Logger)
 
-	confs := getConfs()
+	conf := config.GetConf()
 
-	varContainer := NewVarContainer()
-	varContainer.set("event.pull_request.state", "open")
-	varContainer.set("event.pull_request.title", "connect-5600 lol")
+	jobContainer := NewJobContainer()
+	jobContainer.Set("event.pull_request.state", "open")
+	jobContainer.Set("event.pull_request.title", "connect-5600 lol")
 
-	for _, conf := range confs {
-		runConf(varContainer, conf, logger)
+	for _, job := range conf {
+		runJob(jobContainer, job, logger)
 	}
 }
 
-func runConf(varContainer *VarContainer, conf Conf, logger Logger) {
+func runJob(jobContainer *JobContainer, job Job, logger Logger) {
 	logger.Debug(fmt.Sprintf(
 		"Conditions found: %x",
-		len(conf.Conditions),
+		len(job.Conditions),
 	))
 
 	conditionChecker := ConditionChecker{}
-	for _, condition := range conf.Conditions {
+	for _, condition := range job.Conditions {
 		// varContainer is in ref in case persistName has been set
-		if !conditionChecker.Check(condition, *varContainer, logger) {
+		if !conditionChecker.Check(condition, *jobContainer, logger) {
 			logger.Debug(fmt.Sprintf(
 				"Condition refused '%s'",
 				condition.Name,
@@ -85,12 +90,12 @@ func runConf(varContainer *VarContainer, conf Conf, logger Logger) {
 	}
 	logger.Debug(fmt.Sprintf(
 		"Actions found: %x",
-		len(conf.Actions),
+		len(job.Actions),
 	))
 	actionRunner := ActionRunner{}
 	// run all actions
-	for _, action := range conf.Actions {
-		actionRunner.Run(action, *varContainer)
+	for _, action := range job.Actions {
+		actionRunner.Run(action, *jobContainer)
 		logger.Debug(fmt.Sprintf(
 			"Run action '%s'",
 			action.Name,
