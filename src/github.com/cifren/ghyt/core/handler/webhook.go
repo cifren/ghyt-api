@@ -5,6 +5,7 @@ import (
 	// "gopkg.in/go-playground/webhooks.v5/github"
 	"github.com/kataras/iris"
 	"regexp"
+	"strconv"
 	// "reflect"
 	// "github.com/cifren/ghyt/core/event"
 	// "github.com/cifren/ghyt/core/action"
@@ -50,33 +51,58 @@ func GhWebhookHandler(ctx iris.Context)  {
 
 	//event := event.EventManager.GetGhEvent(payload)
 
+	container := Container{}
+	container.InitContainer()
+	logger := container.Get("logger").(Logger)
+
 	confs := getConfs()
 
 	varContainer := NewVarContainer()
-	varContainer.set("event.pull_request.state", "open")
-	varContainer.set("event.pull_request.title", "connect-5600-plop")
+	varContainer.set("event.pull_request.state", "openw")
+	varContainer.set("event.pull_request.title", "connect-5600 lol")
 
 	for _, conf := range confs {
-		runConf(varContainer, conf)
+		runConf(varContainer, conf, logger)
 	}
 }
 
-func runConf(varContainer *VarContainer, conf Conf) {
+func runConf(varContainer *VarContainer, conf Conf, logger Logger) {
+	logger.Debug("Conditions found: " + strconv.FormatInt(int64(len(conf.Conditions)), 10) )
+
 	conditionChecker := ConditionChecker{}
 	for _, condition := range conf.Conditions {
 		// varContainer is in ref in case persistName has been set
-		if !conditionChecker.Check(condition, *varContainer) {
+		if !conditionChecker.Check(condition, *varContainer, logger) {
+			logger.Debug("Condition refused " + condition.Name)
 			// quit without executing actions
 			return
 		}
-		fmt.Println("Condition success ", condition.Name)
+		logger.Debug("Condition success " + condition.Name)
 	}
+	logger.Debug("Actions found: " + strconv.FormatInt(int64(len(conf.Actions)), 10) )
 
 	actionRunner := ActionRunner{}
 	// run all actions
 	for _, action := range conf.Actions {
 		actionRunner.Run(action, *varContainer)
+		logger.Debug("Run action " + action.Name)
 	}
+}
+
+type Container struct {
+	All map[string]interface{}
+}
+func(this *Container) InitContainer() {
+	this.All = make(map[string]interface{})
+	this.All["logger"] = this.getLogger()
+}
+func(this Container) Get(reference string) interface{} {
+	fmt.Printf("%+v\n", this.All[reference])
+	return this.All[reference]
+}
+func(this Container) getLogger() Logger {
+	logger := NewLogger(DEBUG)
+	return logger
 }
 
 func getConfs() []Conf {
@@ -163,13 +189,22 @@ type Action struct {
 type ConditionChecker struct {
 
 }
-func (this ConditionChecker) Check(conditionConfig Condition, varContainer VarContainer) bool {
+func (this ConditionChecker) Check(
+		conditionConfig Condition,
+		varContainer VarContainer,
+		logger Logger,
+	) bool {
 	conditionType := ConditionRetriever(conditionConfig.Name)
 
-	return conditionType.Check(
+	result, validationErrorMessage := conditionType.Check(
 		conditionConfig,
 		varContainer,
 	)
+	if !result {
+		logger.Debug(validationErrorMessage)
+	}
+
+	return result
 }
 
 
@@ -215,38 +250,54 @@ func ConditionRetriever(name string) ConditionTypeInterface {
 type EqualConditionType struct {
 
 }
-func(this EqualConditionType) Check(conditionConfig Condition, varContainer VarContainer) bool {
+func(this EqualConditionType) Check(conditionConfig Condition, varContainer VarContainer) (bool, string) {
 	arguments := conditionConfig.Arguments
+	variableName := arguments["variableName"]
 
-	containerValue := varContainer.get(arguments["variableName"])
+	containerValue := varContainer.get(variableName)
 	proposedValue := arguments["value"]
 
+	validationErrorMessage := ""
 	if containerValue == proposedValue {
-		return true
+		return true, validationErrorMessage
 	} else {
-		return false
+		validationErrorMessage = fmt.Sprintf(
+			"Variable '%s' with value '%s' does not match with value '%s'",
+			variableName,
+			containerValue,
+			proposedValue,
+		)
+		return false, validationErrorMessage
 	}
 }
 
 type RegexConditionType struct {
 
 }
-func(this RegexConditionType) Check(conditionConfig Condition, varContainer VarContainer) bool {
+func(this RegexConditionType) Check(conditionConfig Condition, varContainer VarContainer) (bool, string) {
 	arguments := conditionConfig.Arguments
+	variableName := arguments["variableName"]
 
-	containerValue := varContainer.get(arguments["variableName"])
+	containerValue := varContainer.get(variableName)
 	proposedValue := arguments["value"]
 	matched, _ := regexp.Match(proposedValue, []byte(containerValue))
 
+	validationErrorMessage := ""
 	if matched {
-		return true
+		return true, validationErrorMessage
 	} else {
-		return false
+		validationErrorMessage = fmt.Sprintf(
+			"Variable '%s' with value '%s' does not match with regex '%s'",
+			variableName,
+			containerValue,
+			proposedValue,
+		)
+		return false, validationErrorMessage
 	}
 }
 
 type ConditionTypeInterface interface {
-	Check(Condition, VarContainer) bool
+	Check(Condition, VarContainer) (bool, string)
 }
 
 
