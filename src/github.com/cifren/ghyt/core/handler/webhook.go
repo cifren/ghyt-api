@@ -5,11 +5,9 @@ import (
 	// "gopkg.in/go-playground/webhooks.v5/github"
 	"github.com/kataras/iris"
 	"regexp"
-	"strconv"
 	// "reflect"
 	// "github.com/cifren/ghyt/core/event"
 	// "github.com/cifren/ghyt/core/action"
-	// "strconv"
 )
 
 func GhWebhookHandler(ctx iris.Context)  {
@@ -58,7 +56,7 @@ func GhWebhookHandler(ctx iris.Context)  {
 	confs := getConfs()
 
 	varContainer := NewVarContainer()
-	varContainer.set("event.pull_request.state", "openw")
+	varContainer.set("event.pull_request.state", "open")
 	varContainer.set("event.pull_request.title", "connect-5600 lol")
 
 	for _, conf := range confs {
@@ -67,25 +65,36 @@ func GhWebhookHandler(ctx iris.Context)  {
 }
 
 func runConf(varContainer *VarContainer, conf Conf, logger Logger) {
-	logger.Debug("Conditions found: " + strconv.FormatInt(int64(len(conf.Conditions)), 10) )
+	logger.Debug(fmt.Sprintf(
+		"Conditions found: %x",
+		len(conf.Conditions),
+	))
 
 	conditionChecker := ConditionChecker{}
 	for _, condition := range conf.Conditions {
 		// varContainer is in ref in case persistName has been set
 		if !conditionChecker.Check(condition, *varContainer, logger) {
-			logger.Debug("Condition refused " + condition.Name)
+			logger.Debug(fmt.Sprintf(
+				"Condition refused '%s'",
+				condition.Name,
+			))
 			// quit without executing actions
 			return
 		}
-		logger.Debug("Condition success " + condition.Name)
+		logger.Debug(fmt.Sprintf("Condition success '%s'", condition.Name))
 	}
-	logger.Debug("Actions found: " + strconv.FormatInt(int64(len(conf.Actions)), 10) )
-
+	logger.Debug(fmt.Sprintf(
+		"Actions found: %x",
+		len(conf.Actions),
+	))
 	actionRunner := ActionRunner{}
 	// run all actions
 	for _, action := range conf.Actions {
 		actionRunner.Run(action, *varContainer)
-		logger.Debug("Run action " + action.Name)
+		logger.Debug(fmt.Sprintf(
+			"Run action '%s'",
+			action.Name,
+		))
 	}
 }
 
@@ -97,7 +106,6 @@ func(this *Container) InitContainer() {
 	this.All["logger"] = this.getLogger()
 }
 func(this Container) Get(reference string) interface{} {
-	fmt.Printf("%+v\n", this.All[reference])
 	return this.All[reference]
 }
 func(this Container) getLogger() Logger {
