@@ -22,6 +22,13 @@ func (this *Issue) HasTag(tag Tag) bool {
 	}
 	return false
 }
+func (this *Issue) AddTag(tag Tag) Issue {
+	if !this.HasTag(tag) {
+		this.Tags = append(this.Tags, tag)
+	}
+
+	return *this
+}
 
 type User struct {
 	Tags []Tag `json:"tags"`
