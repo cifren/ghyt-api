@@ -1,4 +1,4 @@
-package job
+package tools
 
 type JobContainer struct {
 	Variables map[string]string

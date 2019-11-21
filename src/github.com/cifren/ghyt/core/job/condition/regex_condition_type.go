@@ -1,26 +1,29 @@
-package job
+package condition
 
 import (
+	. "github.com/cifren/ghyt/core/job/tools"
 	. "github.com/cifren/ghyt/core/config"
+	"regexp"
 	"fmt"
 )
 
-type EqualConditionType struct {
+type RegexConditionType struct {
 
 }
-func(this EqualConditionType) Check(conditionConfig Condition, jobContainer JobContainer) (bool, string) {
+func(this RegexConditionType) Check(conditionConfig Condition, jobContainer JobContainer) (bool, string) {
 	arguments := conditionConfig.Arguments
 	variableName := arguments["variableName"]
 
 	containerValue := jobContainer.Get(variableName)
 	proposedValue := arguments["value"]
+	matched, _ := regexp.Match(proposedValue, []byte(containerValue))
 
 	validationErrorMessage := ""
-	if containerValue == proposedValue {
+	if matched {
 		return true, validationErrorMessage
 	} else {
 		validationErrorMessage = fmt.Sprintf(
-			"Variable '%s' with value '%s' does not match with value '%s'", 
+			"Variable '%s' with value '%s' does not match with regex '%s'", 
 			variableName,
 			containerValue,
 			proposedValue,

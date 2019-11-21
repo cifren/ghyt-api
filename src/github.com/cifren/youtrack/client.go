@@ -6,7 +6,6 @@ import (
 	"net/http"
 )
 
-
 type Request struct {
 	QueryParams *url.Values
 	Endpoint    string

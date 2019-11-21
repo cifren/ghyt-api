@@ -31,7 +31,7 @@ func GetConf() []Job {
 		 			Name: "addTag", 
 					Arguments: map[string]string{
 						"youtrackId": "%yt_id%", 
-						"value": "nok",
+						"tagName": "nok",
 					},
 				},
 				{
@@ -39,7 +39,7 @@ func GetConf() []Job {
 		 			Name: "removeTag", 
 					Arguments: map[string]string{
 						"youtrackId": "%yt_id%", 
-						"value": "nok",
+						"tagName": "nok",
 					},
 				},
 			},
