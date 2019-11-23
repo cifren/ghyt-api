@@ -11,30 +11,30 @@ type ManagerInterface interface {
 type Manager struct {
 	Client Client
 }
-func (this *Manager) GetIssue(id string) Issue {	
-	repo := this.getRepository(Issue{}).(IssueRepository)
+func (this Manager) GetIssue(id string) Issue {	
+	var repo IssueRepository = this.getRepository(Issue{}).(IssueRepository)
 	
-	return repo.Find(id)
+	return repo.Find(id).(Issue)
 }
 func (this *Manager) GetUserTags() []Tag {
 	repo := this.getRepository(User{}).(UserRepository)
 
 	return repo.GetMyUser().Tags
 }
-func (this *Manager) AddTagToUser(tag Tag) {
-	repo := this.getRepository(Issue{}).(UserRepository)
+func (this *Manager) AddTagToUser(tag Tag) User {
+	repo := this.getRepository(User{}).(UserRepository)
 	user := repo.GetMyUser()
 	user.Tags = append(user.Tags, tag)
 
-	repo.Flush(user)
+	return user
 }
-func (this *Manager) AddTagToIssue(issue Issue, tag Tag) {
+func (this Manager) AddTagToIssue(issue *Issue, tag Tag) {
 	issue.Tags = append(issue.Tags, tag)
-	repo := this.getRepository(Issue{}).(IssueRepository)
-
-	repo.Flush(issue)
 }
-func (this *Manager) getRepository(model interface{}) Repository {
+func (this Manager) Persist(model interface{}) {
+	this.getRepository(model).Flush(&model)
+}
+func (this Manager) getRepository(model interface{}) RepositoryInterface {
 	switch model.(type) {
 	case User:
 		return UserRepository{client: this.Client, route: YoutrackRoutes["my-user"]}

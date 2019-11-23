@@ -14,7 +14,7 @@ type Issue struct {
 	Description string `json:"description"`
 	Tags []Tag `json:"tags"`
 }
-func (this *Issue) HasTag(tag Tag) bool {
+func (this Issue) HasTag(tag Tag) bool {
 	for _ , value := range this.Tags {
 		if value.Id == tag.Id {
 			return true

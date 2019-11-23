@@ -8,8 +8,9 @@ import (
 	"bytes"
 )
 
-type Repository interface {
-	
+type RepositoryInterface interface {
+	Find(id string) interface {}
+	Flush(model interface{})
 }
 
 type RepositoryHelper struct {

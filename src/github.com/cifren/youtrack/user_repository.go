@@ -5,12 +5,14 @@ type UserRepository struct {
 	client Client
 	repository RepositoryHelper
 }
-
-func (this *UserRepository) GetMyUser() User {
-	return this.Find("")
+func (this UserRepository) GetMyUser() User {
+	return this.Find("").(User)
 }
 // Id is empty at anytime
-func (this *UserRepository) Find(id string) User {
+func (this UserRepository) Find(id string) interface{} {
+	return this.FindUser(id)
+}
+func (this UserRepository) FindUser(id string) User {
 	route := this.route
 
 	request := Request{
@@ -22,9 +24,14 @@ func (this *UserRepository) Find(id string) User {
 	var user User
 	
 	this.repository.Load(res, &user)
+
 	return user
 }
-func (this *UserRepository) Flush(user User) {
+func (this UserRepository) Flush(user interface{}) {
+	myUser := user.(User)
+	this.FlushUser(&myUser)
+}
+func (this UserRepository) FlushUser(user *User) {
 	body := this.repository.GetJson(user)
 
 	request := Request{

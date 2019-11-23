@@ -33,9 +33,9 @@ func(this AddTagYoutrackActionType) Run(
 	}
 
 	tag := this.createTag(tagName)
-	client.AddTagToIssue(&issue, tag)
 
-	error = client.Persist(issue)
+	// add & persist
+	error = client.AddTagToIssue(&issue, tag)
 
 	if error != nil {
 		return this.getErrorMessage(error)
