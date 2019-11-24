@@ -4,7 +4,7 @@ import (
 	. "github.com/cifren/ghyt/core/job/tools"
 	. "github.com/cifren/ghyt/core/config"
 	. "github.com/cifren/ghyt/core/client"
-	. "github.com/cifren/youtrack"
+	. "github.com/cifren/youtrack/repository"
 	"errors"
 	"fmt"
 )
@@ -25,6 +25,11 @@ func(this AddTagYoutrackActionType) Run(
 	tagName := arguments["tagName"]
 
 	youtrackId := jobContainer.Get(youtrackIdVariableName)
+	fmt.Printf("%v\n", jobContainer)
+	if youtrackId == "" {
+		err := errors.New("Id is empty")
+		return this.getErrorMessage(err)
+	}
 
 	issue, error := client.GetIssue(youtrackId)
 

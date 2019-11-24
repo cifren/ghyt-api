@@ -6,6 +6,6 @@ import (
 )
 
 type ConditionTypeInterface interface {
-	Check(Condition, JobContainer) (bool, string)
+	Check(Condition, *JobContainer) (bool, string)
 }
 

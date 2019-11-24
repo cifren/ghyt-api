@@ -9,7 +9,7 @@ import (
 type EqualConditionType struct {
 
 }
-func(this EqualConditionType) Check(conditionConfig Condition, jobContainer JobContainer) (bool, string) {
+func(this EqualConditionType) Check(conditionConfig Condition, jobContainer *JobContainer) (bool, string) {
 	arguments := conditionConfig.Arguments
 	variableName := arguments["variableName"]
 

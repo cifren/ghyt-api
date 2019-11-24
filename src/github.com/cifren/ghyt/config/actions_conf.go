@@ -20,9 +20,9 @@ func GetConf() []Job {
 					Name: "regex",
 					Arguments: map[string]string{
 						"variableName": "event.pull_request.title", 
-						"value": "connect-[^-]* ",
+						"value": "connect-[^-][0-9]*",
+						"persistName": "yt_id",
 					},
-					PersistName: "yt_id",
 				},
 			},
 			Actions: []Action{
@@ -30,7 +30,7 @@ func GetConf() []Job {
 					To: "youtrack",
 		 			Name: "addTag", 
 					Arguments: map[string]string{
-						"youtrackId": "%yt_id%", 
+						"youtrackId": "yt_id", 
 						"tagName": "nok",
 					},
 				},
@@ -38,7 +38,7 @@ func GetConf() []Job {
 					To: "youtrack",
 		 			Name: "removeTag", 
 					Arguments: map[string]string{
-						"youtrackId": "%yt_id%", 
+						"youtrackId": "yt_id", 
 						"tagName": "nok",
 					},
 				},

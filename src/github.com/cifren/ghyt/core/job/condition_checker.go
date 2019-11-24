@@ -11,7 +11,7 @@ type ConditionChecker struct {
 }
 func (this ConditionChecker) Check(
 		conditionConfig Condition, 
-		jobContainer JobContainer, 
+		jobContainer *JobContainer, 
 		logger Logger,
 	) bool {
 	conditionType := ConditionRetriever(conditionConfig.Name)

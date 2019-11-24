@@ -1,10 +1,10 @@
-package youtrack
+package repository
 
 const (
-	FieldStyleFields = "color(background,foreground)"
-	TagFields = "tags(id,name," + FieldStyleFields + ")"
-	IssueFields = "id,idReadable,summary,description," + TagFields
-	UserFields = TagFields
+	FieldStyleFields string = "color(background,foreground)"
+	TagFields string = "tags(id,name," + FieldStyleFields + ")"
+	IssueFields string = "id,idReadable,summary,description," + TagFields
+	UserFields string = TagFields
 )
 
 type Issue struct {

@@ -16,7 +16,7 @@ import (
 
 )
 
-func GhWebhookHandler(ctx iris.Context)  {
+func GhWebhookHandler(ctx iris.Context, container Container)  {
 	// hook, _ := github.New(github.Options.Secret(""))
 	// payload, err := hook.Parse(ctx.Request(), github.PingEvent, github.PushEvent, github.PullRequestEvent)
 	// if err != nil {
@@ -55,22 +55,21 @@ func GhWebhookHandler(ctx iris.Context)  {
 
 	//event := event.EventManager.GetGhEvent(payload)
 
-	container := Container{}
-	container.InitContainer()
-	logger := container.Get("logger").(Logger)
 
 	conf := config.GetConf()
 
 	jobContainer := NewJobContainer()
 	jobContainer.Set("event.pull_request.state", "open")
-	jobContainer.Set("event.pull_request.title", "connect-5600 lol")
+	jobContainer.Set("event.pull_request.title", "connect-1517 lol")
 
 	for _, job := range conf {
-		runJob(jobContainer, job, logger)
+		runJob(jobContainer, job, container)
 	}
 }
 
-func runJob(jobContainer *JobContainer, job Job, logger Logger) {
+func runJob(jobContainer *JobContainer, job Job, container Container) {
+	logger := container.Get("logger").(Logger)
+
 	logger.Debug(fmt.Sprintf(
 		"Conditions found: %x",
 		len(job.Conditions),
@@ -79,7 +78,7 @@ func runJob(jobContainer *JobContainer, job Job, logger Logger) {
 	conditionChecker := ConditionChecker{}
 	for _, condition := range job.Conditions {
 		// varContainer is in ref in case persistName has been set
-		if !conditionChecker.Check(condition, *jobContainer, logger) {
+		if !conditionChecker.Check(condition, jobContainer, logger) {
 			logger.Debug(fmt.Sprintf(
 				"Condition refused '%s'",
 				condition.Name,
@@ -93,14 +92,14 @@ func runJob(jobContainer *JobContainer, job Job, logger Logger) {
 		"Actions found: %x",
 		len(job.Actions),
 	))
-	actionRunner := ActionRunner{}
+	actionRunner := container.Get("actionRunner").(ActionRunner)
 	// run all actions
 	for _, action := range job.Actions {
-		actionRunner.Run(action, *jobContainer)
 		logger.Debug(fmt.Sprintf(
 			"Run action '%s'",
 			action.Name,
 		))
+		actionRunner.Run(action, *jobContainer)
 	}
 }
 
