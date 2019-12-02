@@ -1,9 +1,9 @@
 package core
 
 import (
-	"github.com/cifren/ghyt/core/logger"	
+	"github.com/cifren/ghyt/core/logger"
 	"github.com/cifren/ghyt/core/client"
-	"github.com/cifren/youtrack/core"
+	youtrack "github.com/cifren/youtrack/core"
 	"github.com/cifren/ghyt/core/job"
 )
 

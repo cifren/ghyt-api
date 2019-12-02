@@ -10,9 +10,9 @@ type Manager struct {
 	Client Client
 }
 
-func (this Manager) FindIssue(id string) Issue {	
+func (this Manager) FindIssue(id string) Issue {
 	var repo IssueRepository = this.getRepository("issue").(IssueRepository)
-	
+
 	return repo.Find(id).(Issue)
 }
 
@@ -34,9 +34,9 @@ func (this Manager) Persist(modelName string, modelPointer interface{}) {
 func (this Manager) getRepository(modelName string) RepositoryInterface {
 	switch modelName {
 	case "tag":
-		return TagRepository{client: this.Client}
+		return TagRepository{Client: this.Client}
 	case "issue":
-		return IssueRepository{client: this.Client}
+		return IssueRepository{Client: this.Client}
 	default:
 		fmt.Println("That model is not known, failed to find repository")
 	}

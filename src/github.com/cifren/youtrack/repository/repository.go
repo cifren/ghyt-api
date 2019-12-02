@@ -13,11 +13,10 @@ import (
 type RepositoryInterface interface {
 	Find(id string) interface {}
 	Flush(model interface{})
+	getRepository() RepositoryHelper
 }
 
-
 type RepositoryHelper struct {
-	urlValues url.Values
 }
 
 func (this RepositoryHelper) GetJson (model interface{}) io.Reader {
@@ -39,9 +38,9 @@ func(this RepositoryHelper) Load(res http.Response, model interface{}) {
 }
 
 func(this RepositoryHelper) Find(
-	model interface{}, 
-	endpoint string, 
-	client Client, 
+	model interface{},
+	endpoint string,
+	client Client,
 	fields string,
 ) {
 	request := Request{
@@ -53,14 +52,14 @@ func(this RepositoryHelper) Find(
 
 	res, _ := client.Get(request)
 	defer res.Body.Close()
-	
+
 	this.Load(res, &model)
 }
 
 func(this RepositoryHelper) Flush(
-	modelPointer interface{}, 
-	endpoint string, 
-	client Client, 
+	modelPointer interface{},
+	endpoint string,
+	client Client,
 ) {
 	body := this.GetJson(modelPointer)
 
@@ -75,7 +74,9 @@ func(this RepositoryHelper) Flush(
 	client.Post(request)
 }
 
-func(this RepositoryHelper) BuildUrl() {	
-	url, err := url.Parse(this.Url + "/" + request.Endpoint)
-	url.RawQuery = request.QueryParams.Encode()
+func(this RepositoryHelper) BuildUrl(baseUrl string, request Request) string {
+	buildUrl, _ := url.Parse(baseUrl + "/" + request.Endpoint)
+	buildUrl.RawQuery = request.QueryParams.Encode()
+
+	return buildUrl.String()
 }

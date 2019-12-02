@@ -22,7 +22,7 @@ stop:
 
 start:
 	$(dk) up -d go
-	
+
 restart: stop start
 
 logs:
@@ -31,13 +31,13 @@ logs:
 install: stop go.deps-get go.get start
 
 ## GO
-go.deps-get: 
+go.deps-get:
 	$(r_go) get -v github.com/codegangsta/gin
-	
+
 go.get:
 	$(r_go) get -d -v
 
-go.install: 
+go.install:
 	$(r_go) install -v $(project_name)
 
 go.build:

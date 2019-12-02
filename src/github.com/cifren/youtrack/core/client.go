@@ -15,10 +15,12 @@ type Request struct {
 	Body        io.Reader
 }
 func NewRequest(endpoint string) *Request {
-	return Request{
+    request := Request{
 		Endpoint: endpoint,
 		QueryParams: make(url.Values),
 	}
+
+	return &request
 }
 
 type ClientInterface interface {
@@ -43,7 +45,7 @@ func (this Client) Post(request Request) (http.Response, error){
 func (this Client) Request(request Request) (http.Response, error){
 	url, err := url.Parse(this.Url + "/" + request.Endpoint)
 	url.RawQuery = request.QueryParams.Encode()
-	
+
 	req, err := http.NewRequest(
 		request.Method,
 		url.String(),
@@ -71,7 +73,7 @@ func (this Client) Request(request Request) (http.Response, error){
 		//return http.Response{}, err
 	}
 	fmt.Println(fmt.Sprintf(
-		"Request '%s' status '%s' : %s", 
+		"Request '%s' status '%s' : %s",
 		request.Method,
 		res.Status,
 		url.String(),

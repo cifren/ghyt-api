@@ -3,6 +3,7 @@ package client
 import (
 	. "github.com/cifren/youtrack/core"
 	. "github.com/cifren/youtrack/manager"
+	. "github.com/cifren/youtrack/repository"
 	// "errors"
 )
 
@@ -20,7 +21,7 @@ func NewYoutrackClient(client Client) YoutrackClient {
 }
 
 func(this YoutrackClient) GetIssue(id string) (Issue, error) {
-	issue := this.manager.GetIssue(id)
+	issue := this.manager.FindIssue(id)
 
 	return issue, nil
 }
@@ -31,7 +32,7 @@ func(this YoutrackClient) Persist(issue Issue) error {
 
 func(this YoutrackClient) AddTagToIssue(issue *Issue, tag Tag) error {
 	name := tag.Name
-	
+
 	// check if tag doesn't already exist on the issue
 	if _, ok := this.getTag(issue.Tags, name); ok {
 		return nil

@@ -2,8 +2,8 @@ package repository
 
 import (
 	. "github.com/cifren/youtrack/core"
-	. "github.com/cifren/youtrack/repository"
 	"github.com/thedevsaddam/gojsonq"
+	"fmt"
 )
 
 const (
@@ -13,8 +13,8 @@ const (
 )
 
 type TagRepository struct {
-	client Client
-	repository RepositoryHelper
+	Client Client
+	Repository RepositoryHelper
 }
 
 // Id is empty at anytime
@@ -25,34 +25,49 @@ func (this TagRepository) Find(id string) interface{} {
 func (this TagRepository) FindTagsByName(name string) []Tag {
 	request := NewRequest(TAGS_ENDPOINT)
 	request.QueryParams.Add("fields", TagFields)
-	request.QueryParams.Add("$top", PAGIMATION_SIZE)
-	request.QueryParams.Add("$skip", 0)
+	request.QueryParams.Add("$top", fmt.Sprintf("%s", PAGIMATION_SIZE))
+	request.QueryParams.Add("$skip", fmt.Sprintf("%s", 0))
+    var tempTags []Tag
+    tags := []Tag{}
 
 	i := 0
-	for res, err := this.client.Get(request); ok; ok != nil {
-		jq := gojsonq.New().Reader(res)
-		res := jq.From(".").Where("name", ">", 1200).OrWhere("id", "=", nil).Out()
-		
-		gojsonq.New().FromString(json).Where("name", "=", name).Out()
-		i += PAGIMATION_SIZE
-		request.QueryParams.Add("$skip", 0)
+
+	var jsonResult *gojsonq.Result
+	var jsonErr error
+	for respResult, respErr := this.Client.Get(*request); respErr != nil; i = i + PAGIMATION_SIZE {
+        jsonResult, jsonErr = gojsonq.New().Reader(respResult.Body).Where("name", "=", name).GetR()
+        if jsonErr != nil {
+            panic(jsonErr)
+        }
+		tempTags = []Tag{}
+		jsonResult.As(&tempTags)
+
+		append(tags, tempTags...)
+
+		request.QueryParams.Add("$skip", fmt.Sprintf("%s", i))
 	}
+
+	return tags
 }
 
 // Id is empty at anytime
-func(this TagRepository) FindTags(id string) interface{} {
-	endpoint := USER_TAGS_GET_ENDPOINT
-	tag := Tags{}
-	this.repository.Find(
-		&tags, 
-		endpoint, 
-		this.client, 
-		TagsFields,
+func(this TagRepository) FindTag(id string) interface{} {
+	endpoint := TAGS_ENDPOINT
+	tag := Tag{}
+	this.getRepository().Find(
+		&tag,
+		endpoint,
+		this.Client,
+		TagFields,
 	)
 
 	return tag
 }
 
+func(this TagRepository) getRepository() RepositoryHelper {
+    return RepositoryHelper{}
+}
+
 func (this TagRepository) Flush(tagPointer interface{}) {
-	
+
 }
