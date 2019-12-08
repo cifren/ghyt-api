@@ -25,16 +25,19 @@ func (this TagRepository) Find(id string) interface{} {
 func (this TagRepository) FindTagsByName(name string) []Tag {
 	request := NewRequest(TAGS_ENDPOINT)
 	request.QueryParams.Add("fields", TagFields)
-	request.QueryParams.Add("$top", fmt.Sprintf("%s", PAGIMATION_SIZE))
-	request.QueryParams.Add("$skip", fmt.Sprintf("%s", 0))
+	request.QueryParams.Add("$top", fmt.Sprintf("%d", PAGIMATION_SIZE))
+	request.QueryParams.Add("$skip", fmt.Sprintf("%d", 0))
     var tempTags []Tag
     tags := []Tag{}
 
-	i := 0
+	currentPagination := 0
 
 	var jsonResult *gojsonq.Result
 	var jsonErr error
-	for respResult, respErr := this.Client.Get(*request); respErr != nil; i = i + PAGIMATION_SIZE {
+	for respResult, respErr := this.Client.Get(*request); 
+		respErr != nil; 
+		currentPagination = currentPagination + PAGIMATION_SIZE {
+
         jsonResult, jsonErr = gojsonq.New().Reader(respResult.Body).Where("name", "=", name).GetR()
         if jsonErr != nil {
             panic(jsonErr)
@@ -42,9 +45,9 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 		tempTags = []Tag{}
 		jsonResult.As(&tempTags)
 
-		append(tags, tempTags...)
+		tags = append(tags, tempTags...)
 
-		request.QueryParams.Add("$skip", fmt.Sprintf("%s", i))
+		request.QueryParams.Add("$skip", fmt.Sprintf("%d", currentPagination))
 	}
 
 	return tags
