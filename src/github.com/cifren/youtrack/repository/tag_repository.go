@@ -4,6 +4,8 @@ import (
 	. "github.com/cifren/youtrack/core"
 	"github.com/thedevsaddam/gojsonq"
 	"fmt"
+	"errors"
+	//"io/ioutil"
 )
 
 const (
@@ -13,7 +15,7 @@ const (
 )
 
 type TagRepository struct {
-	Client Client
+	Client ClientInterface
 	Repository RepositoryHelper
 }
 
@@ -30,24 +32,71 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
     var tempTags []Tag
     tags := []Tag{}
 
-	currentPagination := 0
+	i := 0
 
 	var jsonResult *gojsonq.Result
 	var jsonErr error
-	for respResult, respErr := this.Client.Get(*request); 
-		respErr != nil; 
-		currentPagination = currentPagination + PAGIMATION_SIZE {
+	var currentPagination int
+	done := false
 
-        jsonResult, jsonErr = gojsonq.New().Reader(respResult.Body).Where("name", "=", name).GetR()
+	for respResult, respErr := this.Client.Get(*request);
+		done == false;
+		i = i + 1 {
+
+		if respErr != nil {
+			panic(respErr)
+		}
+		
+		currentPagination = i * PAGIMATION_SIZE
+		if respResult.Header.Get("Content-Type") != "application/json" {
+			panic(errors.New(fmt.Sprintf(
+				"Content-type detected is not '%s', instead '%s'",
+				"application/json",
+				respResult.Header.Get("Content-Type"),
+			)))
+		}
+		
+		jq := gojsonq.New().Reader(respResult.Body).Where("name", "=", name)
+		
+		if jq.Error() != nil {
+			fmt.Println(jq.Error())
+			done = true
+			continue
+		}
+		
+		// no results found on this page
+		if len(jq.Get().([]interface{})) == 0 {
+			fmt.Printf(
+				"No results found from '%d' and '%d', for tag name '%s'\n",
+				currentPagination,
+				currentPagination + PAGIMATION_SIZE,
+				name,
+			)
+			continue
+		}
+
+        jsonResult, jsonErr = jq.GetR()
         if jsonErr != nil {
             panic(jsonErr)
-        }
+		}
+		fmt.Printf("%#v\n", jsonResult)
 		tempTags = []Tag{}
 		jsonResult.As(&tempTags)
+
+		// Means body was empty
+		if len(tempTags) == 0 {
+			done = true
+			continue
+		}
 
 		tags = append(tags, tempTags...)
 
 		request.QueryParams.Add("$skip", fmt.Sprintf("%d", currentPagination))
+
+		// Decide when to finish for loop
+		if i >= 1000 {
+			done = true
+		}
 	}
 
 	return tags

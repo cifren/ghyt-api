@@ -47,11 +47,12 @@ go.build:
 ngrok.up:
 	$(ngrok) http go:8080
 
-test-install:
+test-install: 
+	$(r_go) get -v -t github.com/cifren/...
 	$(r_go) test -i -v github.com/cifren/...
 
 test: test-install
-	$(r_go) test -v github.com/cifren/...
+	$(r_go) test -cover -race github.com/cifren/youtrack/repository
 
 test-cover: test-install
 	$(r_go) test -cover github.com/cifren/...

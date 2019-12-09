@@ -40,7 +40,7 @@ func(this RepositoryHelper) Load(res http.Response, model interface{}) {
 func(this RepositoryHelper) Find(
 	model interface{},
 	endpoint string,
-	client Client,
+	client ClientInterface,
 	fields string,
 ) {
 	request := Request{

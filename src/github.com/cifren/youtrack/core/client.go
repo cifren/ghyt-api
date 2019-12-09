@@ -24,9 +24,9 @@ func NewRequest(endpoint string) *Request {
 }
 
 type ClientInterface interface {
-	Get(request *Request) (*http.Response, error)
-	Post(request *Request) (*http.Response, error)
-	Request(request *Request) (*http.Response, error)
+	Get(request Request) (http.Response, error)
+	Post(request Request) (http.Response, error)
+	Request(request Request) (http.Response, error)
 }
 
 type Client struct {
