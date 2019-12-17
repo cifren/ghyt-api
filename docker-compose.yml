@@ -2,7 +2,7 @@ version: "3.6"
 
 services:
   go:
-    image: ghyt
+    image: golang:1.12.7
     #build: ./
     #ports:
     # - "5000:9000"

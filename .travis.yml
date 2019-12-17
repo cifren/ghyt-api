@@ -1,8 +1,6 @@
 sudo: true
-language: go
-
-go:
-  - 1.12.x
+service:
+  - docker
 
 script:
   - make test@run
