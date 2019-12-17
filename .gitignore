@@ -1,4 +1,5 @@
 .idea/
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -9,18 +10,6 @@
 
 bin/*
 pkg/
-src/*
-
-gin-bin
-
-!src/github.com/
-src/github.com/*
-
-!src/github.com/cifren/
-src/github.com/cifren/*
-
-!src/github.com/cifren/ghyt/
-!src/github.com/cifren/youtrack/
 
 # Test binary, build with `go test -c`
 *.test

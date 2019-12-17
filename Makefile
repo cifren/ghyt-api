@@ -11,7 +11,7 @@ project_name=github.com/cifren/ghyt
 project_path=/go/src/github.com/cifren/ghyt
 
 ## DOCKER
-console:
+sh:
 	docker-compose run --rm go bash
 
 build:
@@ -47,7 +47,7 @@ go.build:
 ngrok.up:
 	$(ngrok) http go:8080
 
-test-install: 
+test-install:
 	$(r_go) get -v -t github.com/cifren/...
 	$(r_go) test -i -v github.com/cifren/...
 
@@ -57,5 +57,7 @@ test: test-install
 test-cover: test-install
 	$(r_go) test -cover github.com/cifren/...
 
-	
+## New world ######
 
+test@run:
+	$(r_go) test -race ./...
