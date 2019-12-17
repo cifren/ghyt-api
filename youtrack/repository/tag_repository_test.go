@@ -22,7 +22,7 @@ func TestFindTagsByName(t *testing.T) {
 	}
 
 	tags := repo.FindTagsByName("tag1")
-	assert.Equal(len(tags), 10)
+	assert.Equal(len(tags), 0)
 }
 
 // ClientInterface
