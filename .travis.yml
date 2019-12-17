@@ -1,0 +1,12 @@
+sudo: true
+language: go
+
+go:
+  - 1.12.x
+
+script:
+  - make test@run
+
+notifications:
+  email:
+    - cifren@msn.com
