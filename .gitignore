@@ -8,8 +8,8 @@
 *.dylib
 *.db
 
+vendor/
 bin/*
-pkg/
 
 # Test binary, build with `go test -c`
 *.test

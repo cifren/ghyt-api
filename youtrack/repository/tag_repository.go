@@ -5,6 +5,8 @@ import (
 	"github.com/thedevsaddam/gojsonq"
 	"fmt"
 	"errors"
+	"bytes"
+	"encoding/json"
 	//"io/ioutil"
 )
 
@@ -34,8 +36,6 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 
 	i := 0
 
-	var jsonResult *gojsonq.Result
-	var jsonErr error
 	var currentPagination int
 	done := false
 
@@ -75,13 +75,10 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 			continue
 		}
 
-        jsonResult, jsonErr = jq.GetR()
-        if jsonErr != nil {
-            panic(jsonErr)
-		}
-		fmt.Printf("%#v\n", jsonResult)
+		var b bytes.Buffer
 		tempTags = []Tag{}
-		jsonResult.As(&tempTags)
+		jq.Writer(&b)
+		json.Unmarshal(b.Bytes(), &tempTags)
 
 		// Means body was empty
 		if len(tempTags) == 0 {

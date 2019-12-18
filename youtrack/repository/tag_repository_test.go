@@ -13,16 +13,30 @@ import (
 )
 
 func TestFindTagsByName(t *testing.T) {
-	assert := require.New(t)
-
-	client := TestClient{}
-
-	repo := TagRepository{
-		Client: client,
+	
+	testCases := []struct {
+		name             string
+		newExpectedValue int
+		errExpect        bool
+	}{
+		{
+			name: "tag1",
+			newExpectedValue: 1,
+			errExpect: true,
+		},
 	}
 
-	tags := repo.FindTagsByName("tag1")
-	assert.Equal(len(tags), 10)
+	assert := require.New(t)
+	client := TestClient{}
+	var repo TagRepository
+
+	for _, tc := range testCases{
+		repo = TagRepository{
+			Client: client,
+		}
+		tags := repo.FindTagsByName(tc.name)
+		assert.Equal(tc.newExpectedValue, len(tags))
+	}
 }
 
 // ClientInterface
@@ -32,10 +46,8 @@ func(this TestClient) Get(request core.Request)(http.Response, error){
 	w.Header().Set("Content-Type", "application/json")
 	if request.QueryParams.Get("$skip") > fmt.Sprintf("%d", 400) {
 		io.WriteString(w, `[]`)
-		fmt.Printf("%v\n", request.QueryParams.Get("$skip"))
 	} else {
-		io.WriteString(w, `[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"Frontend","id":"5-18","$type":"IssueTag"},{"name":"Infrastructure","id":"5-20","$type":"IssueTag"}]`)
-		fmt.Printf("skip %v\n", request.QueryParams.Get("$skip"))
+		io.WriteString(w, `[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"tag2","id":"5-18","$type":"IssueTag"},{"name":"Infrastructure","id":"5-20","$type":"IssueTag"}]`)
 	}
 	resp := w.Result()
 
