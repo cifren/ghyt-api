@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"io"
+	"strconv"
 
 	"github.com/stretchr/testify/require"
 	"github.com/cifren/youtrack/core"
@@ -16,38 +17,74 @@ func TestFindTagsByName(t *testing.T) {
 	
 	testCases := []struct {
 		name             string
+		dataPages		 []string
+		paginationSize	 int
 		newExpectedValue int
 		errExpect        bool
 	}{
 		{
 			name: "tag1",
+			dataPages: []string{
+				`[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"tag2","id":"5-18","$type":"IssueTag"},{"name":"tag2","id":"5-20","$type":"IssueTag"}]`,
+			},
+			paginationSize: 3,
 			newExpectedValue: 1,
-			errExpect: true,
+			errExpect: false,
+		},
+		{
+			name: "tag2",
+			dataPages: []string{
+				`[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"tag2","id":"5-18","$type":"IssueTag"},{"name":"tag2","id":"5-20","$type":"IssueTag"}]`,
+			},
+			paginationSize: 3,
+			newExpectedValue: 2,
+			errExpect: false,
+		},
+		{
+			name: "tag3",
+			dataPages: []string{
+				`[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"tag2","id":"5-18","$type":"IssueTag"},{"name":"tag2","id":"5-20","$type":"IssueTag"}]`,
+			},
+			paginationSize: 3,
+			newExpectedValue: 0,
+			errExpect: false,
 		},
 	}
 
 	assert := require.New(t)
-	client := TestClient{}
+	var client TestClient
 	var repo TagRepository
 
 	for _, tc := range testCases{
+		client = TestClient{DataPages: tc.dataPages}
 		repo = TagRepository{
 			Client: client,
+			PaginationSize: tc.paginationSize,
 		}
 		tags := repo.FindTagsByName(tc.name)
-		assert.Equal(tc.newExpectedValue, len(tags))
+		if !tc.errExpect {
+			assert.Equal(tc.newExpectedValue, len(tags))
+		}
 	}
 }
 
 // ClientInterface
-type TestClient struct {}
+type TestClient struct {
+	DataPages []string
+}
 func(this TestClient) Get(request core.Request)(http.Response, error){
 	w := httptest.NewRecorder()
 	w.Header().Set("Content-Type", "application/json")
-	if request.QueryParams.Get("$skip") > fmt.Sprintf("%d", 400) {
-		io.WriteString(w, `[]`)
+	paginationSize, _ := strconv.Atoi(request.QueryParams.Get("$top"))
+	skipSize, _ := strconv.Atoi(request.QueryParams.Get("$skip"))
+	pageNumber := (skipSize + paginationSize) / paginationSize
+
+	fmt.Printf("pageNumber %v\n", pageNumber)
+	fmt.Printf("len(this.DataPages) %v\n", len(this.DataPages))
+	if len(this.DataPages) >= pageNumber {
+		io.WriteString(w, this.DataPages[pageNumber-1])
 	} else {
-		io.WriteString(w, `[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"tag2","id":"5-18","$type":"IssueTag"},{"name":"Infrastructure","id":"5-20","$type":"IssueTag"}]`)
+		io.WriteString(w, `[]`)
 	}
 	resp := w.Result()
 

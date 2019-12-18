@@ -13,12 +13,12 @@ import (
 const (
 	// Can see all tags in YT
 	TAGS_ENDPOINT string = "issueTags"
-	PAGIMATION_SIZE int = 400
 )
 
 type TagRepository struct {
 	Client ClientInterface
 	Repository RepositoryHelper
+	PaginationSize int
 }
 
 // Id is empty at anytime
@@ -27,9 +27,10 @@ func (this TagRepository) Find(id string) interface{} {
 }
 
 func (this TagRepository) FindTagsByName(name string) []Tag {
+	paginationSize := this.PaginationSize
 	request := NewRequest(TAGS_ENDPOINT)
 	request.QueryParams.Add("fields", TagFields)
-	request.QueryParams.Add("$top", fmt.Sprintf("%d", PAGIMATION_SIZE))
+	request.QueryParams.Add("$top", fmt.Sprintf("%d", paginationSize))
 	request.QueryParams.Add("$skip", fmt.Sprintf("%d", 0))
     var tempTags []Tag
     tags := []Tag{}
@@ -47,7 +48,7 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 			panic(respErr)
 		}
 		
-		currentPagination = i * PAGIMATION_SIZE
+		currentPagination = i * paginationSize
 		if respResult.Header.Get("Content-Type") != "application/json" {
 			panic(errors.New(fmt.Sprintf(
 				"Content-type detected is not '%s', instead '%s'",
@@ -69,7 +70,7 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 			fmt.Printf(
 				"No results found from '%d' and '%d', for tag name '%s'\n",
 				currentPagination,
-				currentPagination + PAGIMATION_SIZE,
+				currentPagination + paginationSize,
 				name,
 			)
 			continue
