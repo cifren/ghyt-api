@@ -10,7 +10,14 @@ sh:
 
 ## TEST
 test@run:
-	$(r_go) test -cover -race ./...
+	$(r_go) test -race ./...
+
+test@run-cover:
+	$(r_go) test -race ./...
+
+# Ex : $ make test@run-specific file="github.com/cifren/youtrack/repository"
+test@run-specific:
+	$(r_go) test -race $(file)
 
 ## DEV
 dev@mod.clean:

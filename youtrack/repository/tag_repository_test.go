@@ -22,7 +22,7 @@ func TestFindTagsByName(t *testing.T) {
 	}
 
 	tags := repo.FindTagsByName("tag1")
-	assert.Equal(len(tags), 0)
+	assert.Equal(len(tags), 10)
 }
 
 // ClientInterface
@@ -34,8 +34,8 @@ func(this TestClient) Get(request core.Request)(http.Response, error){
 		io.WriteString(w, `[]`)
 		fmt.Printf("%v\n", request.QueryParams.Get("$skip"))
 	} else {
-		io.WriteString(w, `[{"name":"Backend","id":"5-17","$type":"IssueTag"},{"name":"Frontend","id":"5-18","$type":"IssueTag"},{"name":"Infrastructure","id":"5-20","$type":"IssueTag"}]`)
-		fmt.Printf("%v\n", request.QueryParams.Get("$skip"))
+		io.WriteString(w, `[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"Frontend","id":"5-18","$type":"IssueTag"},{"name":"Infrastructure","id":"5-20","$type":"IssueTag"}]`)
+		fmt.Printf("skip %v\n", request.QueryParams.Get("$skip"))
 	}
 	resp := w.Result()
 

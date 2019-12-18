@@ -3,7 +3,7 @@ service:
   - docker
 
 script:
-  - make test@run
+  - make test@run-cover
 
 notifications:
   email:
