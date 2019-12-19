@@ -1,7 +1,7 @@
 package handler
 import (
     "fmt"
-    // "gopkg.in/go-playground/webhooks.v5/github"
+    _ "gopkg.in/go-playground/webhooks.v5/github"
     "github.com/kataras/iris"
     . "github.com/cifren/ghyt/core"
     . "github.com/cifren/ghyt/core/logger"
