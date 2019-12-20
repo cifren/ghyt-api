@@ -7,7 +7,6 @@ import (
 	"errors"
 	"bytes"
 	"encoding/json"
-	//"io/ioutil"
 )
 
 const (
@@ -60,7 +59,7 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 		jq := gojsonq.New().Reader(respResult.Body).Where("name", "=", name)
 		
 		if jq.Error() != nil {
-			fmt.Println(jq.Error())
+			fmt.Printf("Jsonq error '%v'\n", jq.Error())
 			done = true
 			continue
 		}
@@ -68,7 +67,7 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 		// no results found on this page
 		if len(jq.Get().([]interface{})) == 0 {
 			fmt.Printf(
-				"No results found from '%d' and '%d', for tag name '%s'\n",
+				"No results found from row '%d' to '%d', for tag name '%s'\n",
 				currentPagination,
 				currentPagination + paginationSize,
 				name,

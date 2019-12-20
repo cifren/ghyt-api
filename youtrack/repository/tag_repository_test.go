@@ -9,8 +9,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/cifren/youtrack/core"
-
-	"fmt"
 )
 
 func TestFindTagsByName(t *testing.T) {
@@ -33,26 +31,26 @@ func TestFindTagsByName(t *testing.T) {
 			newExpectedValue: 1,
 			errExpect: false,
 		},
-// 		{
-// 			name: "search tag2",
-// 			tagSearch: "tag2",
-// 			dataPages: []string{
-// 				`[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"tag2","id":"5-18","$type":"IssueTag"},{"name":"tag2","id":"5-20","$type":"IssueTag"}]`,
-// 			},
-// 			paginationSize: 3,
-// 			newExpectedValue: 2,
-// 			errExpect: false,
-// 		},
-// 		{
-// 			name: "search tag3",
-// 			tagSearch: "tag3",
-// 			dataPages: []string{
-// 				`[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"tag2","id":"5-18","$type":"IssueTag"},{"name":"tag2","id":"5-20","$type":"IssueTag"}]`,
-// 			},
-// 			paginationSize: 3,
-// 			newExpectedValue: 0,
-// 			errExpect: false,
-// 		},
+		{
+			name: "search tag2",
+			tagSearch: "tag2",
+			dataPages: []string{
+				`[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"tag2","id":"5-18","$type":"IssueTag"},{"name":"tag2","id":"5-20","$type":"IssueTag"}]`,
+			},
+			paginationSize: 3,
+			newExpectedValue: 2,
+			errExpect: false,
+		},
+		{
+			name: "search tag3",
+			tagSearch: "tag3",
+			dataPages: []string{
+				`[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"tag2","id":"5-18","$type":"IssueTag"},{"name":"tag2","id":"5-20","$type":"IssueTag"}]`,
+			},
+			paginationSize: 3,
+			newExpectedValue: 0,
+			errExpect: false,
+		},
 	}
 
 	assert := require.New(t)
@@ -67,7 +65,7 @@ func TestFindTagsByName(t *testing.T) {
 				Client: client,
 				PaginationSize: tc.paginationSize,
 			}
-			tags := repo.FindTagsByName(tc.name)
+			tags := repo.FindTagsByName(tc.tagSearch)
 			if !tc.errExpect {
 				assert.Equal(tc.newExpectedValue, len(tags))
 			}
@@ -86,8 +84,6 @@ func(this TestClient) Get(request core.Request)(http.Response, error){
 	skipSize, _ := strconv.Atoi(request.QueryParams.Get("$skip"))
 	pageNumber := (skipSize + paginationSize) / paginationSize
 
-	fmt.Printf("pageNumber %v\n", pageNumber)
-	fmt.Printf("len(this.DataPages) %v\n", len(this.DataPages))
 	if len(this.DataPages) >= pageNumber {
 		io.WriteString(w, this.DataPages[pageNumber-1])
 	} else {
