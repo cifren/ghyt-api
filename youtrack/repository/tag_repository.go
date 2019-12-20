@@ -38,7 +38,7 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 
 	var currentPagination int
 	done := false
-
+	fmt.Printf("Run request for '%v'\n", request)
 	for respResult, respErr := this.Client.Get(*request);
 		done == false;
 		i = i + 1 {
@@ -55,7 +55,7 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 				respResult.Header.Get("Content-Type"),
 			)))
 		}
-		
+
 		jq := gojsonq.New().Reader(respResult.Body).Where("name", "=", name)
 		
 		if jq.Error() != nil {
@@ -74,11 +74,11 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 			)
 			continue
 		}
-
-		var b bytes.Buffer
+		
+		var resultBytes bytes.Buffer
 		tempTags = []Tag{}
-		jq.Writer(&b)
-		json.Unmarshal(b.Bytes(), &tempTags)
+		jq.Writer(&resultBytes)
+		json.Unmarshal(resultBytes.Bytes(), &tempTags)
 
 		// Means body was empty
 		if len(tempTags) == 0 {
@@ -93,6 +93,9 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 		// Decide when to finish for loop
 		if i >= 1000 {
 			done = true
+		}
+		if !done {
+			fmt.Printf("Run request for '%v'\n", request)
 		}
 	}
 

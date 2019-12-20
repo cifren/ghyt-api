@@ -51,6 +51,14 @@ func TestFindTagsByName(t *testing.T) {
 			newExpectedValue: 0,
 			errExpect: false,
 		},
+		// tes4 : 3 pages, result on page 3
+		// test : 3 pages, result on page 2
+		// test : 3 pages, result not found
+		// test : 4 pages, result on page 1
+		// test : 4 pages, result not found
+		// test : 1 page, http return 500
+		// test : 1 page, http return 401
+		// test : 2 page, http return timeout on page 2
 	}
 
 	assert := require.New(t)
