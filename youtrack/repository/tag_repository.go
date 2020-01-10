@@ -7,6 +7,7 @@ import (
 	"errors"
 	"bytes"
 	"encoding/json"
+	"strconv"
 )
 
 const (
@@ -17,7 +18,7 @@ const (
 type TagRepository struct {
 	Client ClientInterface
 	Repository RepositoryHelper
-	PaginationSize int
+	ItemsPerPage int
 }
 
 // Id is empty at anytime
@@ -26,28 +27,29 @@ func (this TagRepository) Find(id string) interface{} {
 }
 
 func (this TagRepository) FindTagsByName(name string) []Tag {
-	paginationSize := this.PaginationSize
+	itemsPerPage := this.ItemsPerPage
 	request := NewRequest(TAGS_ENDPOINT)
 	request.QueryParams.Add("fields", TagFields)
-	request.QueryParams.Add("$top", fmt.Sprintf("%d", paginationSize))
+	request.QueryParams.Add("$top", fmt.Sprintf("%d", itemsPerPage))
 	request.QueryParams.Add("$skip", fmt.Sprintf("%d", 0))
     var tempTags []Tag
     tags := []Tag{}
 
 	i := 0
 
-	var currentPagination int
-	done := false
-	fmt.Printf("Run request for '%v'\n", request)
-	for respResult, respErr := this.Client.Get(*request);
+	var itemPosition int
+	var nextItemPosition int
+	fmt.Printf("Run #1 look for #name %s, Request '%#v'\n", name, request)
+	for done := false;
 		done == false;
 		i = i + 1 {
+		respResult, respErr := this.Client.Get(*request)
+		fmt.Printf("done %v, i %v\n", done, i)
 
 		if respErr != nil {
 			panic(respErr)
 		}
-		
-		currentPagination = i * paginationSize
+
 		if respResult.Header.Get("Content-Type") != "application/json" {
 			panic(errors.New(fmt.Sprintf(
 				"Content-type detected is not '%s', instead '%s'",
@@ -56,48 +58,55 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 			)))
 		}
 
-		jq := gojsonq.New().Reader(respResult.Body).Where("name", "=", name)
-		
-		if jq.Error() != nil {
-			fmt.Printf("Jsonq error '%v'\n", jq.Error())
+		jq := gojsonq.New().Reader(respResult.Body)
+		// it means page is empty so request should stop
+		if jq.Count() <= 0 {
+			fmt.Println("Page is empty")
 			done = true
 			continue
 		}
-		
+
+		result := jq.Where("name", "=", name)
+
+		// Usually when Json is empty or malformed, it means no more results
+		if result.Error() != nil {
+			fmt.Printf("Usually end of response or malformed json, Jsonq error '%v'\n", jq.Error())
+			// Exit for loop
+			done = true
+			continue
+		}
+
+		itemPosition = i * itemsPerPage
+		nextItemPosition = itemPosition + itemsPerPage
 		// no results found on this page
-		if len(jq.Get().([]interface{})) == 0 {
+		if len(result.Get().([]interface{})) == 0 {
 			fmt.Printf(
 				"No results found from row '%d' to '%d', for tag name '%s'\n",
-				currentPagination,
-				currentPagination + paginationSize,
+				itemPosition,
+				nextItemPosition - 1,
 				name,
 			)
-			continue
-		}
-		
-		var resultBytes bytes.Buffer
-		tempTags = []Tag{}
-		jq.Writer(&resultBytes)
-		json.Unmarshal(resultBytes.Bytes(), &tempTags)
+		} else {
+			var resultBytes bytes.Buffer
+			tempTags = []Tag{}
+			result.Writer(&resultBytes)
+			json.Unmarshal(resultBytes.Bytes(), &tempTags)
 
-		// Means body was empty
-		if len(tempTags) == 0 {
-			done = true
-			continue
+			tags = append(tags, tempTags...)
 		}
 
-		tags = append(tags, tempTags...)
-
-		request.QueryParams.Add("$skip", fmt.Sprintf("%d", currentPagination))
+		fmt.Printf("Skip '%v'\n", nextItemPosition)
+		request.QueryParams.Set("$skip", strconv.Itoa(nextItemPosition))
 
 		// Decide when to finish for loop
 		if i >= 1000 {
-			done = true
+			panic("Too many loop for Repository, means 1000 pages have been searched before being killed")
 		}
 		if !done {
-			fmt.Printf("Run request for '%v'\n", request)
+			fmt.Printf("Run #%d for '%v'\n", i+2, request)
 		}
 	}
+	fmt.Printf("Results found : %d\n", len(tags))
 
 	return tags
 }
