@@ -111,6 +111,19 @@ func TestFindTagsByName(t *testing.T) {
 			tagSearch: "tag8",
 			dataPages: []string{
 				`[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"tag2","id":"5-18","$type":"IssueTag"},{"name":"tag7","id":"5-20","$type":"IssueTag"}]`,
+				`[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"tag4","id":"5-18","$type":"IssueTag"},{"name":"tag8","id":"5-20","$type":"IssueTag"}]`,
+				`[{"name":"tag8","id":"5-17","$type":"IssueTag"},{"name":"tag5","id":"5-18","$type":"IssueTag"},{"name":"tag4","id":"5-20","$type":"IssueTag"}]`,
+				`[{"name":"tag6","id":"5-17","$type":"IssueTag"},{"name":"tag8","id":"5-18","$type":"IssueTag"},{"name":"tag4","id":"5-20","$type":"IssueTag"}]`,
+			},
+			itemsPerPage: 3,
+			newExpectedValue: 3,
+			errExpect: false,
+		},
+		{ // test : 4 pages, result not found
+			name: "search tag9",
+			tagSearch: "tag8",
+			dataPages: []string{
+				`[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"tag2","id":"5-18","$type":"IssueTag"},{"name":"tag7","id":"5-20","$type":"IssueTag"}]`,
 				`[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"tag4","id":"5-18","$type":"IssueTag"},{"name":"tag6","id":"5-20","$type":"IssueTag"}]`,
 				`[{"name":"tag1","id":"5-17","$type":"IssueTag"},{"name":"tag5","id":"5-18","$type":"IssueTag"},{"name":"tag4","id":"5-20","$type":"IssueTag"}]`,
 				`[{"name":"tag6","id":"5-17","$type":"IssueTag"},{"name":"tag2","id":"5-18","$type":"IssueTag"},{"name":"tag4","id":"5-20","$type":"IssueTag"}]`,
