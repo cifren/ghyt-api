@@ -141,7 +141,7 @@ func TestFindTagsByName(t *testing.T) {
 		client := TestClient{DataPages: tc.dataPages}
 
 		t.Run(tc.name, func(t *testing.T) {
-			// t.Parallel()
+			t.Parallel()
 			repo := TagRepository{
 				Client: client,
 				ItemsPerPage: tc.itemsPerPage,
