@@ -17,6 +17,8 @@ func(this *Container) InitContainer() {
 	this.All["logger"] = this.getLogger()
 	this.All["youtrackClient"] = this.getYoutrackClient()
 	this.All["actionRunner"] = this.getActionRunner()
+	this.All["jobRunner"] = this.getJobRunner()
+	this.All["jobContainerFactory"] = this.getJobContainerFactory()
 }
 func(this Container) Get(reference string) interface{} {
 	return this.All[reference]
@@ -37,4 +39,15 @@ func(this Container) getYoutrackClient() client.YoutrackClient {
 }
 func(this Container) getActionRunner() job.ActionRunner {
 	return job.ActionRunner{YoutrackClient: this.getYoutrackClient()}
+}
+func(this Container) getJobRunner() job.JobRunner {
+	return job.ActionRunner{
+		ActionRunner: this.getActionRunner(),
+		ConditionChecker: ConditionChecker{},
+		Logger: this.getLogger(),
+	}
+}
+func(this Container) getJobContainerFactory() job.JobContainerFactory {
+	return job.JobContainerFactory{
+	}
 }

@@ -24,14 +24,16 @@ func (this ActionRunner) Run(actionConfig Action, jobContainer JobContainer) {
 		fmt.Println(err)
 	}
 }
-func (this ActionRunner) clientResolver(clientType string) interface{} {
+func (this ActionRunner) clientResolver(clientTypeName string) interface{} {
 	var client interface{}
 
-	switch clientType {
+	switch clientTypeName {
 		case "youtrack":
 			client = this.YoutrackClient
 		case "github":
-			client = GithubClient{}		
+			client = GithubClient{}
+		default:
+			panic(fmt.Sprintf("Client type not found, given : %#v", clientTypeName))
 	}
 
 	return client

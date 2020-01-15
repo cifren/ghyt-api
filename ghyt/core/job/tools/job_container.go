@@ -7,8 +7,8 @@ import (
 type JobContainer struct {
 	Variables map[string]string
 }
-func NewJobContainer() *JobContainer {
-	v := new(JobContainer)	
+func NewJobContainer() JobContainer {
+	v := JobContainer{}
 	v.Variables = make(map[string]string)
 	return v
 }

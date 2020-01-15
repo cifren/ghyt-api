@@ -6,18 +6,16 @@ import (
 	. "github.com/cifren/ghyt/core/logger"
 )
 
-type ConditionChecker struct {
-
-}
+type ConditionChecker struct {}
 func (this ConditionChecker) Check(
-		conditionConfig Condition, 
-		jobContainer *JobContainer, 
+		conditionConfig Condition,
+		jobContainer *JobContainer,
 		logger Logger,
 	) bool {
 	conditionType := ConditionRetriever(conditionConfig.Name)
 
 	result, validationErrorMessage := conditionType.Check(
-		conditionConfig, 
+		conditionConfig,
 		jobContainer,
 	)
 	if !result {
