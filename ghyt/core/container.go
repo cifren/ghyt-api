@@ -41,9 +41,9 @@ func(this Container) getActionRunner() job.ActionRunner {
 	return job.ActionRunner{YoutrackClient: this.getYoutrackClient()}
 }
 func(this Container) getJobRunner() job.JobRunner {
-	return job.ActionRunner{
+	return job.JobRunner{
 		ActionRunner: this.getActionRunner(),
-		ConditionChecker: ConditionChecker{},
+		ConditionChecker: job.ConditionChecker{},
 		Logger: this.getLogger(),
 	}
 }

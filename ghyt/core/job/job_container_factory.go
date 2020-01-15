@@ -12,7 +12,7 @@ import (
 
 type JobContainerFactory struct {
 }
-func GetJobContainer(payload interface{}) (JobContainer, error) {
+func (this JobContainerFactory) GetJobContainer(payload interface{}) (JobContainer, error) {
 	jobContainer := JobContainer{}
 
     switch payload.(type) {

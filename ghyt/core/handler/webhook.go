@@ -1,15 +1,11 @@
 package handler
 import (
     "fmt"
-    _ "gopkg.in/go-playground/webhooks.v5/github"
+    "gopkg.in/go-playground/webhooks.v5/github"
     "github.com/kataras/iris"
     . "github.com/cifren/ghyt/core"
-    . "github.com/cifren/ghyt/core/logger"
     . "github.com/cifren/ghyt/core/job"
-    . "github.com/cifren/ghyt/core/job/tools"
     . "github.com/cifren/ghyt/core/config"
-    "github.com/cifren/ghyt/config"
-    "github.com/cifren/ghyt/core/event"
 )
 func GhWebhookHandler(ctx iris.Context, container Container)  {
     hook, _ := github.New(github.Options.Secret(""))
@@ -23,7 +19,9 @@ func GhWebhookHandler(ctx iris.Context, container Container)  {
 		}
 	}
 
-    jobContainer = container.Get("jobContainerFactory").GetJobContainer(payload)
+    jobContainerFactory := container.Get("jobContainerFactory").(JobContainerFactory)
+    jobContainer, _ := jobContainerFactory.GetJobContainer(payload)
 
-    jobRunner := container.Get("jobRunner").Run(conf, jobContainer)
+    jobRunner := container.Get("jobRunner").(JobRunner).Run([]Job{}, jobContainer)
+    fmt.Printf("%v", jobRunner)
 }
