@@ -45,6 +45,7 @@ func(this Container) getJobRunner() job.JobRunner {
 		ActionRunner: this.getActionRunner(),
 		ConditionChecker: job.ConditionChecker{},
 		Logger: this.getLogger(),
+		Configuration: this.getJobRunnerConf(),
 	}
 }
 func(this Container) getJobContainerFactory() job.JobContainerFactory {

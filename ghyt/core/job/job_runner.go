@@ -11,12 +11,13 @@ type JobRunner struct {
 	ActionRunner ActionRunnerInterface
 	ConditionChecker ConditionCheckerInterface
 	Logger Logger
+	Configuration []Job
 }
-func (this JobRunner) Run(jobs []Job, jobContainer JobContainer) []JobFeedback {
+func (this JobRunner) Run(jobContainer JobContainer) []JobFeedback {
 	jobFeedbacks := []JobFeedback{}
 	i := 0
 
-    for _, job := range jobs {
+    for _, job := range this.Configuration {
         jobFeedback := JobFeedback{}
         this.runJob(jobContainer, job, &jobFeedback)
         jobFeedbacks = append(jobFeedbacks, jobFeedback)
@@ -33,9 +34,8 @@ func (this JobRunner) runJob(jobContainer JobContainer, job Job, jobFeedback *Jo
     conditionChecker := this.ConditionChecker
     for _, condition := range job.Conditions {
         conditionFeedback := ConditionFeedback{}
-        jobFeedback.ConditionFeedbacks = append(jobFeedback.ConditionFeedbacks, conditionFeedback)
-
         conditionFeedback.Name = condition.Name
+
         // jobContainer is in ref in case persistName has been set
         if !conditionChecker.Check(condition, &jobContainer, this.Logger) {
             conditionFeedback.Result = false
@@ -49,6 +49,8 @@ func (this JobRunner) runJob(jobContainer JobContainer, job Job, jobFeedback *Jo
         } else {
             conditionFeedback.Result = true
         }
+
+        jobFeedback.ConditionFeedbacks = append(jobFeedback.ConditionFeedbacks, conditionFeedback)
         this.Logger.Debug(fmt.Sprintf("Condition success '%s'", condition.Name))
     }
     this.Logger.Debug(fmt.Sprintf(
@@ -59,14 +61,14 @@ func (this JobRunner) runJob(jobContainer JobContainer, job Job, jobFeedback *Jo
     // run all actions
     for _, action := range job.Actions {
         actionFeedback := ActionFeedback{}
-        jobFeedback.ActionFeedbacks = append(jobFeedback.ActionFeedbacks, actionFeedback)
-
         actionFeedback.Name = action.Name
+
         this.Logger.Debug(fmt.Sprintf(
             "Run action '%s'",
             action.Name,
         ))
         this.ActionRunner.Run(action, jobContainer)
+        jobFeedback.ActionFeedbacks = append(jobFeedback.ActionFeedbacks, actionFeedback)
     }
 }
 
