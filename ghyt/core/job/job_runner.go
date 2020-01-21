@@ -48,13 +48,16 @@ func (this JobRunner) runJob(jobContainer JobContainer, job Job, jobFeedback *Jo
             ))
 
             // quit without executing actions
-            return
         } else {
             conditionFeedback.Result = true
         }
 
         jobFeedback.ConditionFeedbacks = append(jobFeedback.ConditionFeedbacks, conditionFeedback)
         this.Logger.Debug(fmt.Sprintf("Condition success '%s'", condition.Name))
+
+        if !resultCondition {
+            return
+        }
     }
     this.Logger.Debug(fmt.Sprintf(
         "Actions found: %x",
@@ -76,12 +79,15 @@ func (this JobRunner) runJob(jobContainer JobContainer, job Job, jobFeedback *Jo
         }
 
         jobFeedback.ActionFeedbacks = append(jobFeedback.ActionFeedbacks, actionFeedback)
+
+        if err != nil {
+            // stops action loop
+            return
+        }
     }
 }
 
 type JobFeedback struct {
-	// Alert if Job crashes
-    ErrorMessage string
     ConditionFeedbacks []ConditionFeedback
     ActionFeedbacks []ActionFeedback
 }
