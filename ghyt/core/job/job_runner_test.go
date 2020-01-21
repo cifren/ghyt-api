@@ -524,11 +524,6 @@ func TestJobRunnerRun(t *testing.T) {
 				},
 			},
         },
-
-//         {
-//          name: "2 jobs, 2 passed"
-//          name: "2 jobs, 2 failed"
-// 		   }
     }
 
 	assert := require.New(t)

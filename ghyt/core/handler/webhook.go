@@ -4,9 +4,11 @@ import (
     "gopkg.in/go-playground/webhooks.v5/github"
     "github.com/kataras/iris"
     . "github.com/cifren/ghyt/core"
+    . "github.com/cifren/ghyt/core/logger"
     . "github.com/cifren/ghyt/core/job"
 )
-func GhWebhookHandler(ctx iris.Context, container Container)  {
+func GhWebhookHandler(ctx iris.Context, container Container) {
+	logger := container.Get("logger").(Logger)
     hook, _ := github.New(github.Options.Secret(""))
     payload, err := hook.Parse(ctx.Request(), github.PingEvent, github.PushEvent, github.PullRequestEvent)
 	if err != nil {
@@ -19,8 +21,8 @@ func GhWebhookHandler(ctx iris.Context, container Container)  {
 	}
 
     jobContainer, _ := container.Get("jobContainerFactory").(JobContainerFactory).GetJobContainer(payload)
+    logger.Debug(fmt.Sprintf("jobContainer : %v\n", jobContainer))
 
     jobRunner := container.Get("jobRunner").(JobRunner).Run(jobContainer)
-
-    fmt.Printf("%v", jobRunner)
+    logger.Debug(fmt.Sprintf("Feedbacks : %v\n", jobRunner))
 }
