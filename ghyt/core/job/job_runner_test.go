@@ -2,6 +2,9 @@ package job
 
 import (
 	"testing"
+	"strings"
+	"errors"
+	"fmt"
 
 	"github.com/stretchr/testify/require"
 
@@ -14,42 +17,63 @@ func TestJobRunnerRun(t *testing.T) {
 
 	testCases := []struct {
         name string
+        givenConf []config.Job
         // which tags is we are looking for
         newExpectedValue []JobFeedback
         errExpect bool
     }{
         {
 			name: "All conditions and all actions passed",
+			givenConf: []config.Job {
+                {
+                    Conditions: []config.Condition{
+                        {
+                            Name: "condition-success-1",
+                        },
+                        {
+                            Name: "condition-success-2",
+                        },
+                    },
+                    Actions: []config.Action{
+                        {
+                            Name: "action-success-1",
+                        },
+                        {
+                            Name: "action-success-2",
+                        },
+                    },
+                },
+            },
 			newExpectedValue: []JobFeedback {
 				{
 					ErrorMessage: "",
                     ConditionFeedbacks: []ConditionFeedback {
                         {
-							Name: "test-equal",
+							Name: "condition-success-1",
                             ErrorMessage: "",
                             Result: true,
                         },
                         {
-							Name: "test-regex",
+							Name: "condition-success-2",
                             ErrorMessage: "",
                             Result: true,
                         },
                     },
 					ActionFeedbacks: []ActionFeedback {
 						{
-							Name: "test-addTag",
+							Name: "action-success-1",
 							ErrorMessage: "",
 						},
 						{
-							Name: "test-removeTag",
+							Name: "action-success-2",
 							ErrorMessage: "",
 						},
 					},
 				},
 			},
         },
+
 //         {
-// 			name: "All conditions and all actions passed",
 // 			name: "First condition failed, no action",
 // 			name: "Second condition failed, no action",
 // 			name: "Third condition failed, no action",
@@ -67,7 +91,7 @@ func TestJobRunnerRun(t *testing.T) {
 			ActionRunner: MockActionRunner{},
 			ConditionChecker: MockConditionChecker{},
 	        Logger: logger.NewLogger(logger.DEBUG),
-	        Configuration: GetConf(),
+	        Configuration: tc.givenConf,
 		}
 
 		jobContainer := tools.NewJobContainer()
@@ -97,8 +121,15 @@ func TestJobRunnerRun(t *testing.T) {
 }
 
 type MockActionRunner struct {}
-func (this MockActionRunner) Run(actionConfig config.Action, jobContainer tools.JobContainer) {
-	// Nothing
+func (this MockActionRunner) Run(actionConfig config.Action, jobContainer tools.JobContainer) error {
+	switch true {
+		case strings.Contains(actionConfig.Name, "action-success"):
+			return nil
+		case strings.Contains(actionConfig.Name, "action-fail"):
+			return errors.New("Beautiful crash !")
+		default:
+			panic(fmt.Sprintf("Case not found, actionName given : %v", actionConfig.Name))
+	}
 }
 
 type MockConditionChecker struct {}
@@ -106,32 +137,13 @@ func (this MockConditionChecker) Check(
 		conditionConfig config.Condition,
 		jobContainer *tools.JobContainer,
 		logger logger.Logger,
-	) bool {
-	return true
-}
-
-func GetConf() []config.Job {
-
-	conf := []config.Job {
-		{
-			Conditions: []config.Condition{
-				{
-					Name: "test-equal",
-				},
-				{
-					Name: "test-regex",
-				},
-			},
-			Actions: []config.Action{
-				{
-		 			Name: "test-addTag",
-				},
-				{
-		 			Name: "test-removeTag",
-				},
-			},
-		},
+	) (bool, error) {
+	switch true {
+		case strings.Contains(conditionConfig.Name, "condition-success"):
+			return true, nil
+		case strings.Contains(conditionConfig.Name, "condition-fail"):
+			return false, errors.New("Beautiful crash !")
+		default:
+			panic(fmt.Sprintf("Case not found, conditionName given : %v", conditionConfig.Name))
 	}
-
-	return conf
 }

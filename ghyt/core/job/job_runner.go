@@ -36,12 +36,15 @@ func (this JobRunner) runJob(jobContainer JobContainer, job Job, jobFeedback *Jo
         conditionFeedback := ConditionFeedback{}
         conditionFeedback.Name = condition.Name
 
+		resultCondition, err := conditionChecker.Check(condition, &jobContainer, this.Logger)
         // jobContainer is in ref in case persistName has been set
-        if !conditionChecker.Check(condition, &jobContainer, this.Logger) {
+        if !resultCondition {
             conditionFeedback.Result = false
+            conditionFeedback.ErrorMessage = err.Error()
             this.Logger.Debug(fmt.Sprintf(
-                "Condition refused '%s'",
+                "Condition refused '%s' because %s",
                 condition.Name,
+                err.Error(),
             ))
 
             // quit without executing actions
@@ -67,7 +70,11 @@ func (this JobRunner) runJob(jobContainer JobContainer, job Job, jobFeedback *Jo
             "Run action '%s'",
             action.Name,
         ))
-        this.ActionRunner.Run(action, jobContainer)
+        err := this.ActionRunner.Run(action, jobContainer)
+        if err != nil {
+             actionFeedback.ErrorMessage = err.Error()
+        }
+
         jobFeedback.ActionFeedbacks = append(jobFeedback.ActionFeedbacks, actionFeedback)
     }
 }

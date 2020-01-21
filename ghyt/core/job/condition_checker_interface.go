@@ -7,7 +7,7 @@ import (
 )
 
 type ConditionCheckerInterface interface {
-	Check(conditionConfig Condition, jobContainer *JobContainer, logger Logger) bool
+	Check(conditionConfig Condition, jobContainer *JobContainer, logger Logger) (bool, error)
 }
 
 

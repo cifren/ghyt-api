@@ -1,10 +1,11 @@
 package core
 
 import (
+	youtrack "github.com/cifren/youtrack/core"
 	"github.com/cifren/ghyt/core/logger"
 	"github.com/cifren/ghyt/core/client"
-	youtrack "github.com/cifren/youtrack/core"
 	"github.com/cifren/ghyt/core/job"
+	"github.com/cifren/ghyt/core/config"
 )
 
 type Container struct {
@@ -51,4 +52,7 @@ func(this Container) getJobRunner() job.JobRunner {
 func(this Container) getJobContainerFactory() job.JobContainerFactory {
 	return job.JobContainerFactory{
 	}
+}
+func(this Container) getJobRunnerConf() []config.Job {
+	return []config.Job{}
 }

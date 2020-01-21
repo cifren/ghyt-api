@@ -5,7 +5,6 @@ import (
     "github.com/kataras/iris"
     . "github.com/cifren/ghyt/core"
     . "github.com/cifren/ghyt/core/job"
-    . "github.com/cifren/ghyt/core/config"
 )
 func GhWebhookHandler(ctx iris.Context, container Container)  {
     hook, _ := github.New(github.Options.Secret(""))
@@ -19,13 +18,9 @@ func GhWebhookHandler(ctx iris.Context, container Container)  {
 		}
 	}
 
-    jobContainer := container
-	    .Get("jobContainerFactory").(JobContainerFactory)
-	    .GetJobContainer(payload)
+    jobContainer, _ := container.Get("jobContainerFactory").(JobContainerFactory).GetJobContainer(payload)
 
-    jobRunner := container
-        .Get("jobRunner").(JobRunner)
-        .Run(jobContainer)
+    jobRunner := container.Get("jobRunner").(JobRunner).Run(jobContainer)
 
     fmt.Printf("%v", jobRunner)
 }

@@ -7,5 +7,5 @@ import (
 
 
 type ActionRunnerInterface interface {
-	Run(Action, JobContainer)
+	Run(Action, JobContainer) error
 }

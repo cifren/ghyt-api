@@ -11,17 +11,18 @@ func (this ConditionChecker) Check(
 		conditionConfig Condition,
 		jobContainer *JobContainer,
 		logger Logger,
-	) bool {
+	) (bool, error) {
 	conditionType := ConditionRetriever(conditionConfig.Name)
 
-	result, validationErrorMessage := conditionType.Check(
+	result, validationError := conditionType.Check(
 		conditionConfig,
 		jobContainer,
 	)
 	if !result {
-		logger.Debug(validationErrorMessage)
+		logger.Debug(validationError.Error())
+		return false, validationError
 	}
 
-	return result
+	return true, nil
 }
 

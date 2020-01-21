@@ -10,7 +10,7 @@ import (
 type ActionRunner struct {
 	YoutrackClient YoutrackClient
 }
-func (this ActionRunner) Run(actionConfig Action, jobContainer JobContainer) {
+func (this ActionRunner) Run(actionConfig Action, jobContainer JobContainer) error {
 	actionType := ActionRetriever(actionConfig.To, actionConfig.Name)
 	client := this.clientResolver(actionConfig.To)
 
@@ -22,7 +22,10 @@ func (this ActionRunner) Run(actionConfig Action, jobContainer JobContainer) {
 
 	if err != nil {
 		fmt.Println(err)
+		return err
 	}
+
+	return nil
 }
 func (this ActionRunner) clientResolver(clientTypeName string) interface{} {
 	var client interface{}
