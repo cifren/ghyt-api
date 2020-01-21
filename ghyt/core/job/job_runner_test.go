@@ -550,7 +550,6 @@ func TestJobRunnerRun(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			for expectedJobFdIndex, expectedJobFd := range tc.newExpectedValue {
 
-				assert.Equal(expectedJobFd.ErrorMessage, actualJobFeedbacks[expectedJobFdIndex].ErrorMessage)
 				assert.Equal(len(expectedJobFd.ConditionFeedbacks), len(actualJobFeedbacks[expectedJobFdIndex].ConditionFeedbacks))
 				assert.Equal(len(expectedJobFd.ActionFeedbacks), len(actualJobFeedbacks[expectedJobFdIndex].ActionFeedbacks))
 
