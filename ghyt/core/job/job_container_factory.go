@@ -13,7 +13,7 @@ import (
 type JobContainerFactory struct {
 }
 func (this JobContainerFactory) GetJobContainer(payload interface{}) (JobContainer, error) {
-	jobContainer := JobContainer{}
+	jobContainer := NewJobContainer()
 
     switch payload.(type) {
 		case github.PushPayload:
@@ -24,7 +24,6 @@ func (this JobContainerFactory) GetJobContainer(payload interface{}) (JobContain
 		case github.PullRequestPayload:
 			release := payload.(github.PullRequestPayload)
 
-		    jobContainer = NewJobContainer()
 		    jobContainer.Set("event.pull_request.state", release.PullRequest.State)
 		    jobContainer.Set("event.pull_request.title", release.PullRequest.Title)
 
