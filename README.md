@@ -2,35 +2,26 @@
 
 ## Description
 
-This will install a webserver that will allow you to receive notification from external tools
+This package allow you to quickly put on a system that operate actions between Youtrack and Github, using
+a webserver receiving hooks from github and sending actions to Youtrack.
 
-Define your configuration containing conditions and actions
-
-Depending on the conditions the webserver will execute the actions based on the event you wanted
+It needs for that a configuration that defines jobs, conditions and actions that will be played.
 
 ## Pre-install
 
 You need :
+- make
 - docker
 - docker-compose
-- make
 
-## Install the project for the first time
+## Run your test
 
 ```bash
-$ make install
+$ make test@run
 ```
 
-## Usage - Run the project
+## Run only some tests
 
 ```bash
-$ make start
-```
-
-You can now access on http://localhost:5000
-
-## See the logs
-
-```bash
-$ make logs
+$ make test@run-specific file="github.com/cifren/youtrack/repository"
 ```
