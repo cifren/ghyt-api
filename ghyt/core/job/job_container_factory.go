@@ -7,7 +7,7 @@ import (
 
     "gopkg.in/go-playground/webhooks.v5/github"
 
-	. "github.com/cifren/ghyt/core/job/tools"
+	. "github.com/cifren/ghyt-api/ghyt/core/job/tools"
 )
 
 type JobContainerFactory struct {

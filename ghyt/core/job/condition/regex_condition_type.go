@@ -4,8 +4,8 @@ import (
 	"regexp"
 	"fmt"
 	"errors"
-	. "github.com/cifren/ghyt/core/job/tools"
-	. "github.com/cifren/ghyt/core/config"
+	. "github.com/cifren/ghyt-api/ghyt/core/job/tools"
+	. "github.com/cifren/ghyt-api/ghyt/core/config"
 )
 
 type RegexConditionType struct {

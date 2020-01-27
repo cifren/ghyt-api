@@ -2,8 +2,8 @@ package manager
 
 import (
 	"fmt"
-	. "github.com/cifren/youtrack/repository"
-	. "github.com/cifren/youtrack/core"
+	. "github.com/cifren/ghyt-api/youtrack/repository"
+	. "github.com/cifren/ghyt-api/youtrack/core"
 )
 
 type Manager struct {

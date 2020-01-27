@@ -1,11 +1,11 @@
 package core
 
 import (
-	youtrack "github.com/cifren/youtrack/core"
-	"github.com/cifren/ghyt/core/logger"
-	"github.com/cifren/ghyt/core/client"
-	"github.com/cifren/ghyt/core/job"
-	"github.com/cifren/ghyt/core/config"
+	youtrack "github.com/cifren/ghyt-api/youtrack/core"
+	"github.com/cifren/ghyt-api/ghyt/core/logger"
+	"github.com/cifren/ghyt-api/ghyt/core/client"
+	"github.com/cifren/ghyt-api/ghyt/core/job"
+	"github.com/cifren/ghyt-api/ghyt/core/config"
 )
 
 type Container struct {

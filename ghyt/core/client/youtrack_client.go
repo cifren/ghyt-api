@@ -1,9 +1,9 @@
 package client
 
 import (
-	. "github.com/cifren/youtrack/core"
-	. "github.com/cifren/youtrack/manager"
-	. "github.com/cifren/youtrack/repository"
+	. "github.com/cifren/ghyt-api/youtrack/core"
+	. "github.com/cifren/ghyt-api/youtrack/manager"
+	. "github.com/cifren/ghyt-api/youtrack/repository"
 	// "errors"
 )
 

@@ -3,9 +3,9 @@ import (
     "fmt"
     "gopkg.in/go-playground/webhooks.v5/github"
     "github.com/kataras/iris"
-    . "github.com/cifren/ghyt/core"
-    . "github.com/cifren/ghyt/core/logger"
-    . "github.com/cifren/ghyt/core/job"
+    . "github.com/cifren/ghyt-api/ghyt/core"
+    . "github.com/cifren/ghyt-api/ghyt/core/logger"
+    . "github.com/cifren/ghyt-api/ghyt/core/job"
 )
 func GhWebhookHandler(ctx iris.Context, container Container) {
 	logger := container.Get("logger").(Logger)

@@ -1,4 +1,4 @@
-module github.com/cifren
+module github.com/cifren/ghyt-api
 
 go 1.12
 

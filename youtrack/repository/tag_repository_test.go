@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"github.com/stretchr/testify/require"
-	"github.com/cifren/youtrack/core"
+	"github.com/cifren/ghyt-api/youtrack/core"
 
 	"fmt"
 )

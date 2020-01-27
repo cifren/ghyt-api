@@ -23,5 +23,5 @@ $ make test@run
 ## Run only some tests
 
 ```bash
-$ make test@run-specific file="github.com/cifren/youtrack/repository"
+$ make test@run-specific file="github.com/cifren/ghyt-api/youtrack/repository"
 ```

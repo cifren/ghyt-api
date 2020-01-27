@@ -2,7 +2,7 @@ package job
 
 import (
 	"fmt"
-	. "github.com/cifren/ghyt/core/job/condition"
+	. "github.com/cifren/ghyt-api/ghyt/core/job/condition"
 )
 
 func ConditionRetriever(name string) ConditionTypeInterface {

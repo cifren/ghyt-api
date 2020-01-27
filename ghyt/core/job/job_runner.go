@@ -2,9 +2,9 @@ package job
 
 import (
 	"fmt"
-	. "github.com/cifren/ghyt/core/config"
-	. "github.com/cifren/ghyt/core/logger"
-	. "github.com/cifren/ghyt/core/job/tools"
+	. "github.com/cifren/ghyt-api/ghyt/core/config"
+	. "github.com/cifren/ghyt-api/ghyt/core/logger"
+	. "github.com/cifren/ghyt-api/ghyt/core/job/tools"
 )
 
 type JobRunner struct {

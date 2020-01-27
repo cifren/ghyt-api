@@ -2,7 +2,7 @@ package job
 
 import(
 	"fmt"
-	. "github.com/cifren/ghyt/core/job/action"
+	. "github.com/cifren/ghyt-api/ghyt/core/job/action"
 )
 
 func ActionRetriever(to string, name string) ActionTypeInterface {
