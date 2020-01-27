@@ -5,7 +5,7 @@ import (
 	. "github.com/cifren/ghyt-api/ghyt/core/config"
 )
 
-type ConditionTypeInterface interface {
-	Check(Condition, *JobContainer) (bool, error)
-}
 
+type ActionRunnerInterface interface {
+	Run(Action, JobContainer) error
+}

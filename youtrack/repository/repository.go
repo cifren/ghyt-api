@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"encoding/json"
 	"bytes"
-	. "github.com/cifren/youtrack/core"
+	. "github.com/cifren/ghyt-api/youtrack/core"
 )
 
 type RepositoryInterface interface {

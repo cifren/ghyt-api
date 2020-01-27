@@ -15,7 +15,7 @@ test@run:
 test@run-cover:
 	$(r_go) test -race ./...
 
-# Ex : $ make test@run-specific file="github.com/cifren/youtrack/repository"
+# Ex : $ make test@run-specific file="github.com/cifren/ghyt-api/youtrack/repository"
 test@run-specific:
 	$(r_go) test -race $(file)
 

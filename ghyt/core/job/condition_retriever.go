@@ -1,7 +1,8 @@
 package job
 
-import (	
-	. "github.com/cifren/ghyt/core/job/condition"
+import (
+	"fmt"
+	. "github.com/cifren/ghyt-api/ghyt/core/job/condition"
 )
 
 func ConditionRetriever(name string) ConditionTypeInterface {
@@ -12,6 +13,8 @@ func ConditionRetriever(name string) ConditionTypeInterface {
 			conditionType = EqualConditionType{}
 		case "regex":
 			conditionType = RegexConditionType{}
+		default:
+			panic(fmt.Sprintf("Condition type not found, given : %#v", name))
 	}
 
 	return conditionType

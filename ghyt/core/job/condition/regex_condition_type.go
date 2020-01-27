@@ -1,16 +1,17 @@
 package condition
 
 import (
-	. "github.com/cifren/ghyt/core/job/tools"
-	. "github.com/cifren/ghyt/core/config"
 	"regexp"
 	"fmt"
+	"errors"
+	. "github.com/cifren/ghyt-api/ghyt/core/job/tools"
+	. "github.com/cifren/ghyt-api/ghyt/core/config"
 )
 
 type RegexConditionType struct {
 
 }
-func(this RegexConditionType) Check(conditionConfig Condition, jobContainer *JobContainer) (bool, string) {
+func(this RegexConditionType) Check(conditionConfig Condition, jobContainer *JobContainer) (bool, error) {
 	arguments := conditionConfig.Arguments
 	persistName := arguments["persistName"]
 	variableName := arguments["variableName"]
@@ -24,16 +25,16 @@ func(this RegexConditionType) Check(conditionConfig Condition, jobContainer *Job
 		jobContainer.Set(persistName, matched)
 	}
 
-	validationErrorMessage := ""	
+	validationErrorMessage := ""
 	if matched != "" {
-		return true, validationErrorMessage
+		return true, nil
 	} else {
 		validationErrorMessage = fmt.Sprintf(
-			"Variable '%s' with value '%s' does not match with regex '%s'", 
+			"Variable '%s' with value '%s' does not match with regex '%s'",
 			variableName,
 			containerValue,
 			regex,
 		)
-		return false, validationErrorMessage
+		return false, errors.New(validationErrorMessage)
 	}
 }

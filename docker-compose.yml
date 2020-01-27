@@ -3,14 +3,7 @@ version: "3.6"
 services:
   go:
     image: golang:1.12.7
-    #build: ./
-    #ports:
-    # - "5000:9000"
     volumes:
       - ./:/go
-    #command: ["gin", "--port", "9000", "--appPort", "9001", "run", "main.go"]
     environment:
       GOPATH: "/go/vendor"
-
-  #ngrok:
-  #  image: wernight/ngrok

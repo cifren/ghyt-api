@@ -1,16 +1,16 @@
 package action
 
 import (
-	. "github.com/cifren/ghyt/core/job/tools"
-	. "github.com/cifren/ghyt/core/config"
-	//. "github.com/cifren/ghyt/core/client"
+	. "github.com/cifren/ghyt-api/ghyt/core/job/tools"
+	. "github.com/cifren/ghyt-api/ghyt/core/config"
+	//. "github.com/cifren/ghyt-api/ghyt/core/client"
 )
 
 type RemoveTagYoutrackActionType struct {
 
 }
 func(this RemoveTagYoutrackActionType) Run(
-	actionConfig Action, 
+	actionConfig Action,
 	jobContainer JobContainer,
 	clientInterface interface{},
 ) error {
