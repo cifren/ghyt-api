@@ -16,13 +16,13 @@ func GhWebhookHandler(ctx iris.Context, container Container) {
 			// ok event wasn't one of the ones asked to be parsed
 			fmt.Println(github.ErrEventNotFound)
 		} else {
-			fmt.Printf("Error on payload: %+v\n", err)
+			logger.Debug("Error on payload: %+v")
 		}
 	}
 
     jobContainer, _ := container.Get("jobContainerFactory").(JobContainerFactory).GetJobContainer(payload)
-    logger.Debug(fmt.Sprintf("jobContainer : %v\n", jobContainer))
+    logger.Debug(fmt.Sprintf("jobContainer : %+v", jobContainer))
 
     jobRunner := container.Get("jobRunner").(JobRunner).Run(jobContainer)
-    logger.Debug(fmt.Sprintf("Feedbacks : %v\n", jobRunner))
+    logger.Debug(fmt.Sprintf("Feedbacks : %+v", jobRunner))
 }
