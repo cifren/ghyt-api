@@ -50,10 +50,10 @@ func (this JobRunner) runJob(jobContainer JobContainer, job Job, jobFeedback *Jo
             // quit without executing actions
         } else {
             conditionFeedback.Result = true
+            this.Logger.Debug(fmt.Sprintf("Condition success '%s'", condition.Name))
         }
 
         jobFeedback.ConditionFeedbacks = append(jobFeedback.ConditionFeedbacks, conditionFeedback)
-        this.Logger.Debug(fmt.Sprintf("Condition success '%s'", condition.Name))
 
         if !resultCondition {
             return

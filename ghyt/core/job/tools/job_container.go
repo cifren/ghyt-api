@@ -1,9 +1,5 @@
 package tools
 
-import (
-	"fmt"
-)
-
 type JobContainer struct {
 	Variables map[string]string
 }
@@ -16,6 +12,5 @@ func(this JobContainer) Get(name string) string {
 	return this.Variables[name]
 }
 func(this *JobContainer) Set(name string, value string) {
-	fmt.Println(value)
 	this.Variables[name] = value
 }
