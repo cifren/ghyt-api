@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -17,7 +18,6 @@ const (
 
 type TagRepository struct {
 	Client ClientInterface
-	Repository RepositoryHelper
 	ItemsPerPage int
 }
 
@@ -28,6 +28,10 @@ func (this TagRepository) Find(id string) interface{} {
 
 func (this TagRepository) FindTagsByName(name string) []Tag {
 	itemsPerPage := this.ItemsPerPage
+	if itemsPerPage == 0 {
+		panic("Value 0 is not possible, please select another 'top' value")
+	}
+
 	request := NewRequest(TAGS_ENDPOINT)
 	request.QueryParams.Add("fields", TagFields)
 	request.QueryParams.Add("$top", fmt.Sprintf("%d", itemsPerPage))
@@ -44,13 +48,12 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 		done == false;
 		i = i + 1 {
 		respResult, respErr := this.Client.Get(*request)
-		fmt.Printf("done %v, i %v\n", done, i)
 
 		if respErr != nil {
 			panic(respErr)
 		}
 
-		if respResult.Header.Get("Content-Type") != "application/json" {
+		if !strings.Contains(respResult.Header.Get("Content-Type"), "application/json") {
 			panic(errors.New(fmt.Sprintf(
 				"Content-type detected is not '%s', instead '%s'",
 				"application/json",
@@ -130,5 +133,23 @@ func(this TagRepository) getRepository() RepositoryHelper {
 }
 
 func (this TagRepository) Flush(tagPointer interface{}) {
+	myTag := tagPointer.(*Tag)
+    this.FlushTag(myTag)
+}
 
+func (this TagRepository) FlushTag(tag *Tag) {
+	endpoint := TAGS_ENDPOINT
+	if (*tag).Id != "" {
+		endpoint = endpoint + "/" + (*tag).Id
+	}
+
+	jsonTag := struct{
+		Name string `json:"name"`
+	}{
+		Name: tag.Name,
+	}
+
+	this.getRepository().Flush(tag, endpoint, this.Client, TagFields, jsonTag)
+
+	fmt.Printf("%#v\n", tag)
 }

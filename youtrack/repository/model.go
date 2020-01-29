@@ -2,9 +2,9 @@ package repository
 
 const (
 	FieldStyleFields string = "color(background,foreground)"
-	TagFields string = "tags(id,name," + FieldStyleFields + ")"
-	IssueFields string = "id,idReadable,summary,description," + TagFields
-	UserFields string = TagFields
+	TagFields string = "id,name," + FieldStyleFields
+	IssueFields string = "id,idReadable,summary,description,tags(" + TagFields +")"
+	UserFields string = "tags(" + TagFields + ")"
 )
 
 type Issue struct {

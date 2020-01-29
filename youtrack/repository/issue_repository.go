@@ -9,7 +9,7 @@ const (
 )
 
 type IssueRepository struct {
-	Client Client
+	Client ClientInterface
 }
 
 func (this IssueRepository) Find(id string) interface {} {
@@ -31,9 +31,8 @@ func (this IssueRepository) Flush(issuePointer interface{}) {
 }
 
 func (this IssueRepository) FlushIssue(issue *Issue) {
-	endpoint := ISSUE_ENDPOINT + "/" + (*issue).Id
-
-	this.getRepository().Flush(&issue, endpoint, this.Client)
+	endpoint := ISSUE_ENDPOINT + "/" + (*issue).IdReadable
+	this.getRepository().Flush(issue, endpoint, this.Client, IssueFields, nil)
 }
 
 func(this IssueRepository) getRepository() RepositoryHelper {

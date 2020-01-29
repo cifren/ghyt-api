@@ -4,6 +4,7 @@ import (
 	"io"
 	"net/url"
 	"net/http"
+	"bytes"
 	"fmt"
 )
 
@@ -46,10 +47,14 @@ func (this Client) Request(request Request) (http.Response, error){
 	url, err := url.Parse(this.Url + "/" + request.Endpoint)
 	url.RawQuery = request.QueryParams.Encode()
 
+	var body io.Reader
+	if request.Body != nil {
+		body = request.Body.(io.Reader)
+	}
 	req, err := http.NewRequest(
 		request.Method,
 		url.String(),
-		request.Body,
+		body,
 	)
 
 	if err != nil {
@@ -65,6 +70,22 @@ func (this Client) Request(request Request) (http.Response, error){
 	for k, v := range request.Headers {
 		req.Header.Add(k, v)
 	}
+	if body != nil {
+		fmt.Println(fmt.Sprintf(
+			"Request '%s' : %s, headers => %+v, body => %s",
+			request.Method,
+			url.String(),
+			req.Header,
+			body.(*bytes.Buffer).String(),
+		))
+	} else {
+		fmt.Println(fmt.Sprintf(
+			"Request '%s' : %s, headers => %+v",
+			request.Method,
+			url.String(),
+			req.Header,
+		))
+	}
 
 	res, err2 := this.http.Do(req)
 
@@ -73,11 +94,8 @@ func (this Client) Request(request Request) (http.Response, error){
 		//return http.Response{}, err
 	}
 	fmt.Println(fmt.Sprintf(
-		"Request '%s' status '%s' : %s",
-		request.Method,
+		"Request status '%s'",
 		res.Status,
-		url.String(),
 	))
 	return *res, nil
 }
-

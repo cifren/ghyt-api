@@ -34,7 +34,7 @@ func (this Manager) Persist(modelName string, modelPointer interface{}) {
 func (this Manager) getRepository(modelName string) RepositoryInterface {
 	switch modelName {
 	case "tag":
-		return TagRepository{Client: this.Client}
+		return TagRepository{Client: this.Client, ItemsPerPage: 200}
 	case "issue":
 		return IssueRepository{Client: this.Client}
 	default:

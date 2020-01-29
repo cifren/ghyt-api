@@ -1,13 +1,13 @@
 package repository
 
 import (
-	"io"
 	"io/ioutil"
 	"net/url"
 	"net/http"
 	"encoding/json"
 	"bytes"
 	. "github.com/cifren/ghyt-api/youtrack/core"
+	"fmt"
 )
 
 type RepositoryInterface interface {
@@ -19,7 +19,7 @@ type RepositoryInterface interface {
 type RepositoryHelper struct {
 }
 
-func (this RepositoryHelper) GetJson (model interface{}) io.Reader {
+func (this RepositoryHelper) GetJson(model interface{}) *bytes.Buffer {
 	s, _ := json.Marshal(model)
 	b := bytes.NewBuffer(s)
 	return b
@@ -59,19 +59,32 @@ func(this RepositoryHelper) Find(
 func(this RepositoryHelper) Flush(
 	modelPointer interface{},
 	endpoint string,
-	client Client,
+	client ClientInterface,
+	fields string,
+	customData interface{},
 ) {
-	body := this.GetJson(modelPointer)
+	var body *bytes.Buffer
+	if customData == nil {
+		body = this.GetJson(modelPointer)
+	} else {
+		body = this.GetJson(customData)
+	}
 
 	request := Request{
+		QueryParams: make(url.Values),
 		Endpoint: endpoint,
 		Body: body,
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 		},
 	}
+	q := request.QueryParams
+	q.Add("fields", fields)
 
-	client.Post(request)
+	res, _ := client.Post(request)
+	defer res.Body.Close()
+
+	this.Load(res, &modelPointer)
 }
 
 func(this RepositoryHelper) BuildUrl(baseUrl string, request Request) string {
