@@ -29,7 +29,7 @@ func(this Container) getLogger() logger.Logger {
 	return logger
 }
 func(this Container) getYoutrackClient() client.YoutrackClient {
-	params := this.All["params"].(map[string]interface{})
+	params := this.All["parameters"].(map[string]interface{})
 	youtrackParams := params["youtrack"].(map[string]string)
 	youtrackUrl := youtrackParams["url"]
 	token := youtrackParams["token"]
@@ -54,5 +54,5 @@ func(this Container) getJobContainerFactory() job.JobContainerFactory {
 	}
 }
 func(this Container) getJobRunnerConf() []config.Job {
-	return []config.Job{}
+	return this.All["jobConfig"].([]config.Job)
 }
