@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"bytes"
 	. "github.com/cifren/ghyt-api/youtrack/core"
-	"fmt"
+	//"fmt"
 )
 
 type RepositoryInterface interface {
@@ -74,9 +74,6 @@ func(this RepositoryHelper) Flush(
 		QueryParams: make(url.Values),
 		Endpoint: endpoint,
 		Body: body,
-		Headers: map[string]string{
-			"Content-Type": "application/json",
-		},
 	}
 	q := request.QueryParams
 	q.Add("fields", fields)

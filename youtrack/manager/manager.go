@@ -7,7 +7,7 @@ import (
 )
 
 type Manager struct {
-	Client Client
+	Client ClientInterface
 }
 
 func (this Manager) FindIssue(id string) Issue {
