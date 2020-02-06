@@ -3,7 +3,7 @@ dk_run=$(dk) run --rm
 ## GOLANG
 dkr_go=$(dk_run) go
 r_go=$(dkr_go) go
-
+ #plop
 ## DOCKER
 sh:
 	docker-compose run --rm go bash
