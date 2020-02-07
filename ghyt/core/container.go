@@ -54,5 +54,5 @@ func(this Container) getJobContainerFactory() job.JobContainerFactory {
 	}
 }
 func(this Container) getJobRunnerConf() []config.Job {
-	return this.All["jobConfig"].([]config.Job)
+	return this.All["jobRepository"].(config.JobRepositoryInterface).GetJobs()
 }
