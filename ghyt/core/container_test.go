@@ -9,15 +9,15 @@ func TestRun(t *testing.T) {
 
 	all := make(map[string]interface{})
 	all["parameters"] = getParameters()
-	all["jobRepository"] = JobRepositoryTest{}
+	all["jobsConfRepository"] = JobRepositoryTest{}
 
 	container := Container{All: all}
 	container.InitContainer()
 }
 
 type JobRepositoryTest struct {}
-func (JobRepositoryTest) GetJobs() []config.Job {
-  return []config.Job {}
+func (JobRepositoryTest) GetJobs() ([]config.Job, error) {
+  return []config.Job{}, nil
 }
 
 func getParameters() map[string]interface{} {
