@@ -11,20 +11,25 @@ type JobRunner struct {
 	ActionRunner ActionRunnerInterface
 	ConditionChecker ConditionCheckerInterface
 	Logger Logger
-	Configuration []Job
+	JobsConfRepository JobsConfRepositoryInterface
 }
 func (this JobRunner) Run(jobContainer JobContainer) []JobFeedback {
 	jobFeedbacks := []JobFeedback{}
 	i := 0
 
-    for _, job := range this.Configuration {
-        jobFeedback := JobFeedback{}
-        this.runJob(jobContainer, job, &jobFeedback)
-        jobFeedbacks = append(jobFeedbacks, jobFeedback)
-        i++
-    }
+  jobsConf, err := this.getJobsConf()
+  if err != nil {
+    panic(err)
+  }
 
-    return jobFeedbacks
+  for _, job := range jobsConf {
+      jobFeedback := JobFeedback{}
+      this.runJob(jobContainer, job, &jobFeedback)
+      jobFeedbacks = append(jobFeedbacks, jobFeedback)
+      i++
+  }
+
+  return jobFeedbacks
 }
 func (this JobRunner) runJob(jobContainer JobContainer, job Job, jobFeedback *JobFeedback) {
     this.Logger.Debug(fmt.Sprintf(
@@ -85,6 +90,9 @@ func (this JobRunner) runJob(jobContainer JobContainer, job Job, jobFeedback *Jo
             return
         }
     }
+}
+func (this JobRunner) getJobsConf() ([]Job, error) {
+  return this.JobsConfRepository.GetJobs()
 }
 
 type JobFeedback struct {
