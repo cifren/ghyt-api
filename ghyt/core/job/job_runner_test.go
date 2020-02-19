@@ -534,8 +534,8 @@ func TestJobRunnerRun(t *testing.T) {
 		jobRunner := JobRunner{
 			ActionRunner: MockActionRunner{},
 			ConditionChecker: MockConditionChecker{},
-	        Logger: logger.NewLogger(logger.DEBUG),
-	        Configuration: tc.givenConf,
+      Logger: logger.NewLogger(logger.DEBUG),
+      JobsConfRepository: MockJobsConfRepository{JobsConf: tc.givenConf},
 		}
 
 		jobContainer := tools.NewJobContainer()
@@ -589,4 +589,11 @@ func (this MockConditionChecker) Check(
 		default:
 			panic(fmt.Sprintf("Case not found, conditionName given : %v", conditionConfig.Name))
 	}
+}
+
+type MockJobsConfRepository struct{
+  JobsConf []config.Job
+}
+func (this MockJobsConfRepository) GetJobs() ([]config.Job, error) {
+  return this.JobsConf, nil
 }

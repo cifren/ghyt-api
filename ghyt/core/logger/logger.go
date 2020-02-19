@@ -6,13 +6,14 @@ import (
 
 // Level is linked to verbosity conf
 const (
+	NONE int = -2
 	ERROR int = -1
 	NOTICE int = 1
 	INFO int = 2
 	DEBUG int = 3
 )
 type Logger struct {
-	VerbosityLevel int	
+	VerbosityLevel int
 }
 func NewLogger(verbosity int) Logger {
 	logger := Logger{}

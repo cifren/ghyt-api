@@ -20,9 +20,9 @@ func GhWebhookHandler(ctx iris.Context, container Container) {
 		}
 	}
 
-    jobContainer, _ := container.Get("jobContainerFactory").(JobContainerFactory).GetJobContainer(payload)
-    logger.Debug(fmt.Sprintf("jobContainer : %+v", jobContainer))
+  jobContainer, _ := container.Get("jobContainerFactory").(JobContainerFactory).GetJobContainer(payload)
+  logger.Debug(fmt.Sprintf("jobContainer : %+v", jobContainer))
 
-    jobRunner := container.Get("jobRunner").(JobRunner).Run(jobContainer)
-    logger.Debug(fmt.Sprintf("Feedbacks : %+v", jobRunner))
+  jobRunner := container.Get("jobRunner").(JobRunner).Run(jobContainer)
+  logger.Debug(fmt.Sprintf("Feedbacks : %+v", jobRunner))
 }

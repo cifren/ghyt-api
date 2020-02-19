@@ -46,13 +46,13 @@ func(this Container) getJobRunner() job.JobRunner {
 		ActionRunner: this.getActionRunner(),
 		ConditionChecker: job.ConditionChecker{},
 		Logger: this.getLogger(),
-		Configuration: this.getJobRunnerConf(),
+		JobsConfRepository: this.getJobConfRepository(),
 	}
 }
 func(this Container) getJobContainerFactory() job.JobContainerFactory {
 	return job.JobContainerFactory{
 	}
 }
-func(this Container) getJobRunnerConf() []config.Job {
-	return this.All["jobConfig"].([]config.Job)
+func(this Container) getJobConfRepository() config.JobsConfRepositoryInterface {
+	return this.All["jobsConfRepository"].(config.JobsConfRepositoryInterface)
 }
