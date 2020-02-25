@@ -12,17 +12,20 @@ type IssueRepository struct {
 	Client ClientInterface
 }
 
-func (this IssueRepository) Find(id string) interface {} {
-	return this.FindIssue(id)
+func (this IssueRepository) Find(id string) (interface {}, error) {
+  return this.FindIssue(id)
 }
 
-func (this IssueRepository) FindIssue(id string) Issue {
+func (this IssueRepository) FindIssue(id string) (Issue, error) {
 	endpoint := ISSUE_ENDPOINT + "/" + id
 	issue := Issue{}
 
-	this.getRepository().Find(&issue, endpoint, this.Client, IssueFields)
+	err := this.getRepository().Find(&issue, endpoint, this.Client, IssueFields)
+	if err != nil {
+	  return Issue{}, err
+	}
 
-	return issue
+	return issue, nil
 }
 
 func (this IssueRepository) Flush(issuePointer interface{}) {

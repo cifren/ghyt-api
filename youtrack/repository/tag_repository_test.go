@@ -146,7 +146,7 @@ func TestFindTagsByName(t *testing.T) {
 				Client: client,
 				ItemsPerPage: tc.itemsPerPage,
 			}
-			tags := repo.FindTagsByName(tc.tagSearch)
+			tags, _ := repo.FindTagsByName(tc.tagSearch)
 			if !tc.errExpect {
 				assert.Equal(tc.newExpectedValue, len(tags))
 			}

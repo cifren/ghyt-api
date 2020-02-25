@@ -22,14 +22,14 @@ type TagRepository struct {
 }
 
 // Id is empty at anytime
-func (this TagRepository) Find(id string) interface{} {
+func (this TagRepository) Find(id string) (interface{}, error) {
 	return this.FindTag(id)
 }
 
-func (this TagRepository) FindTagsByName(name string) []Tag {
+func (this TagRepository) FindTagsByName(name string) ([]Tag, error) {
 	itemsPerPage := this.ItemsPerPage
 	if itemsPerPage == 0 {
-		panic("Value 0 is not possible, please select another 'top' value")
+		return []Tag{}, errors.New("Value 0 is not possible, please select another 'top' value")
 	}
 
 	request := NewRequest(TAGS_ENDPOINT)
@@ -50,15 +50,15 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 		respResult, respErr := this.Client.Get(*request)
 
 		if respErr != nil {
-			panic(respErr)
+			return []Tag{}, respErr
 		}
 
 		if !strings.Contains(respResult.Header.Get("Content-Type"), "application/json") {
-			panic(errors.New(fmt.Sprintf(
+			return []Tag{}, errors.New(fmt.Sprintf(
 				"Content-type detected is not '%s', instead '%s'",
 				"application/json",
 				respResult.Header.Get("Content-Type"),
-			)))
+			))
 		}
 
 		jq := gojsonq.New().Reader(respResult.Body)
@@ -111,21 +111,24 @@ func (this TagRepository) FindTagsByName(name string) []Tag {
 	}
 	fmt.Printf("Results found : %d\n", len(tags))
 
-	return tags
+	return tags, nil
 }
 
 // Id is empty at anytime
-func(this TagRepository) FindTag(id string) interface{} {
+func(this TagRepository) FindTag(id string) (interface{}, error) {
 	endpoint := TAGS_ENDPOINT
 	tag := Tag{}
-	this.getRepository().Find(
+	err := this.getRepository().Find(
 		&tag,
 		endpoint,
 		this.Client,
 		TagFields,
 	)
+	if err != nil {
+	  return Tag{}, err
+	}
 
-	return tag
+	return tag, nil
 }
 
 func(this TagRepository) getRepository() RepositoryHelper {
@@ -134,7 +137,7 @@ func(this TagRepository) getRepository() RepositoryHelper {
 
 func (this TagRepository) Flush(tagPointer interface{}) {
 	myTag := tagPointer.(*Tag)
-    this.FlushTag(myTag)
+  this.FlushTag(myTag)
 }
 
 func (this TagRepository) FlushTag(tag *Tag) {

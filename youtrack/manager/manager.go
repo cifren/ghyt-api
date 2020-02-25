@@ -10,13 +10,18 @@ type Manager struct {
 	Client ClientInterface
 }
 
-func (this Manager) FindIssue(id string) Issue {
-	var repo IssueRepository = this.getRepository("issue").(IssueRepository)
+func (this Manager) FindIssue(id string) (Issue, error) {
+	repo := this.getRepository("issue").(IssueRepository)
+  issue, err := repo.Find(id)
 
-	return repo.Find(id).(Issue)
+  if err != nil  {
+    return Issue{}, err
+  }
+
+	return issue.(Issue), nil
 }
 
-func (this Manager) FindTagsByName(name string) []Tag {
+func (this Manager) FindTagsByName(name string) ([]Tag, error) {
 	repo := this.getRepository("tag").(TagRepository)
 
 	return repo.FindTagsByName(name)
