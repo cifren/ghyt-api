@@ -4,7 +4,6 @@ import (
 	. "github.com/cifren/ghyt-api/youtrack/core"
 	. "github.com/cifren/ghyt-api/youtrack/manager"
 	. "github.com/cifren/ghyt-api/youtrack/repository"
-	// "errors"
 )
 
 type YoutrackClient struct {
@@ -21,9 +20,7 @@ func NewYoutrackClient(client Client) YoutrackClient {
 }
 
 func(this YoutrackClient) GetIssue(id string) (Issue, error) {
-	issue := this.manager.FindIssue(id)
-
-	return issue, nil
+	return this.manager.FindIssue(id)
 }
 
 func(this YoutrackClient) Persist(issue Issue) error {
@@ -39,7 +36,10 @@ func(this YoutrackClient) AddTagToIssue(issue *Issue, tag Tag) error {
 	}
 
 	// if doesnt exist in user tags, create tag in youtrack
-	tags := this.manager.FindTagsByName(tag.Name)
+	tags, err := this.manager.FindTagsByName(tag.Name)
+	if err != nil {
+	  return err
+	}
 	if len(tags) == 0 {
 		this.manager.Persist("tag", &tag)
 	} else {

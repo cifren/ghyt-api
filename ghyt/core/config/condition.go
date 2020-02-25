@@ -1,6 +1,7 @@
 package config
 
 type Condition struct {
-	Name string
-	Arguments map[string]string
+	Name string `json:"name"`
+	Arguments map[string]string `json:"arguments"`
+	Id int `json:"id"`
 }

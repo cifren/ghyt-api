@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"bytes"
 	"fmt"
+	"encoding/json"
 )
 
 type Request struct {
@@ -13,7 +14,13 @@ type Request struct {
 	Endpoint    string
 	Method      string
 	Headers     map[string]string
-	Body        io.Reader
+	// struct object
+	Body        interface{}
+}
+func (this Request) GetJsonBody() *bytes.Buffer {
+  s, _ := json.Marshal(this.Body)
+	b := bytes.NewBuffer(s)
+	return b
 }
 func NewRequest(endpoint string) *Request {
     request := Request{
@@ -49,7 +56,7 @@ func (this Client) Request(request Request) (http.Response, error){
 
 	var body io.Reader
 	if request.Body != nil {
-		body = request.Body.(io.Reader)
+		body = request.GetJsonBody()
 	}
 	req, err := http.NewRequest(
 		request.Method,
@@ -58,8 +65,7 @@ func (this Client) Request(request Request) (http.Response, error){
 	)
 
 	if err != nil {
-		panic(err)
-		//return http.Response{}, err
+		return http.Response{}, err
 	}
 
 	// Add auth header
@@ -87,11 +93,10 @@ func (this Client) Request(request Request) (http.Response, error){
 		))
 	}
 
-	res, err2 := this.http.Do(req)
+	res, err := this.http.Do(req)
 
-	if err2 != nil {
-		panic(err2)
-		//return http.Response{}, err
+	if err != nil {
+		return http.Response{}, err
 	}
 	fmt.Println(fmt.Sprintf(
 		"Request status '%s'",

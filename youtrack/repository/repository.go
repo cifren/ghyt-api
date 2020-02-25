@@ -5,24 +5,16 @@ import (
 	"net/url"
 	"net/http"
 	"encoding/json"
-	"bytes"
 	. "github.com/cifren/ghyt-api/youtrack/core"
-	//"fmt"
 )
 
 type RepositoryInterface interface {
-	Find(id string) interface {}
+	Find(id string) (interface {}, error)
 	Flush(model interface{})
 	getRepository() RepositoryHelper
 }
 
 type RepositoryHelper struct {
-}
-
-func (this RepositoryHelper) GetJson(model interface{}) *bytes.Buffer {
-	s, _ := json.Marshal(model)
-	b := bytes.NewBuffer(s)
-	return b
 }
 
 func(this RepositoryHelper) Load(res http.Response, model interface{}) {
@@ -42,7 +34,7 @@ func(this RepositoryHelper) Find(
 	endpoint string,
 	client ClientInterface,
 	fields string,
-) {
+) error {
 	request := Request{
 		QueryParams: make(url.Values),
 		Endpoint: endpoint,
@@ -50,10 +42,15 @@ func(this RepositoryHelper) Find(
 	q := request.QueryParams
 	q.Add("fields", fields)
 
-	res, _ := client.Get(request)
+	res, err := client.Get(request)
+
+	if err != nil {
+	  return err
+	}
 	defer res.Body.Close()
 
 	this.Load(res, &model)
+	return nil
 }
 
 func(this RepositoryHelper) Flush(
@@ -63,11 +60,11 @@ func(this RepositoryHelper) Flush(
 	fields string,
 	customData interface{},
 ) {
-	var body *bytes.Buffer
+	var body interface{}
 	if customData == nil {
-		body = this.GetJson(modelPointer)
+		body = modelPointer
 	} else {
-		body = this.GetJson(customData)
+		body = customData
 	}
 
 	request := Request{
