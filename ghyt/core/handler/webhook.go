@@ -1,6 +1,7 @@
 package handler
 import (
     "fmt"
+    "time"
     "gopkg.in/go-playground/webhooks.v5/github"
     "github.com/kataras/iris"
     "github.com/fatih/structs"
@@ -34,6 +35,7 @@ func GhWebhookHandler(ctx iris.Context, container Container) {
   }
 
   jobLogEntity := JobLog{
+    CreatedAt: time.Now(),
     Request: structs.Map(payload),
     ErrorMessage: errMessage,
     Feedback: feedbacks,
